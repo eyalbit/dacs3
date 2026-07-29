@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DACS 3.0 Analysis - iwm</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+        }
+        .header-info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            direction: ltr;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            direction: ltr;
+        }
+        .no-setups {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            color: #856404;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-info">
+            <h1>📊 DACS 3.0 Options Strategy Analysis</h1>
+            <div class="timestamp">
+                <strong>תיקייה:</strong> iwm<br>
+                <strong>תאריך יצירה:</strong> 28/07/2026 16:10:58<br>
+                <strong>מודל:</strong> Gemini with DACS Instructions
+            </div>
+        </div>
+
+        <div class="content">
+<h3>Market & Catalyst Intelligence</h3>
+<p>* **תאריך עדכון:** 28 ביולי 2026.</p>
+<p>* **סקירת מאקרו ל-IWM (iShares Russell 2000 ETF):** מדד המניות הקטנות נסחר סביב 292.84 עם ירידה קלה של 0.11-. הסנטימנט הכללי בשוק מושפע מנתוני אינפלציה קרובים וציפיות לשינויי ריבית, המשפיעים ישירות על תנודתיות (IV) של מניות קטנות שנוטות להיות רגישות יותר למחזורים כלכליים. ה-Implied Volatility במבנה הנתונים נע בין 16% ל-20%, ומציג תנאי שוק נוחים לבניית אסטרטגיות אלכסוניות (Diagonal Spreads) תוך ניצול מבנה Term Structure מתאים.</p>
+<br>
+<p>---</p>
+<br>
+<h3>DACS-3.0 (Weekly Strategy) Setups</h3>
+<br>
+<h3>Strategy Context & Rationale</h3>
+<p>האסטרטגיות להלן נבחרו בקפדנות בהתאם לכללי DACS-3.0 עבור נכס הבסיס IWM. נבחרו פוזיציות שבהן ה-Short Leg נמצא בטווח ה-Delta הנדרש (0.08–0.15), עם Open Interest גבוה מ-500 להבטחת נזילות, ו-Expected Move המכובד המספק מרווח ביטחון ביחס למחיר המניה הנוכחי (292.84). כל הפוזיציות מציגות מרווח Bid-Ask צר ועומדות במגבלות ה-Margin וה-Fast Ratio.</p>
+<br>
+<p>---</p>
+<br>
+<h3>B - IWM Weekly Call DACS-3.0 (Setup 1)</h3>
+<p>> *Note: Start the title with 'B' if the position is in Backwardation, or 'C' if it is in Contango.*</p>
+<br>
+<table>
+<tr><th>Leg / Metric</th><th>Date (Expiry)</th><th>Type (Call/Put)</th><th>Strike</th><th>Delta</th><th>IV</th><th>Bid/Ask</th><th>Mid Cost</th></tr>
+<tr><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td></tr>
+<tr><td>**Short Leg**</td><td>07-31</td><td>Call</td><td>300</td><td>0.135</td><td>19.9%</td><td>0.39 / 0.43</td><td>$0.41</td></tr>
+<tr><td>**Long Leg**</td><td>08-07</td><td>Call</td><td>302</td><td>0.177</td><td>17.7%</td><td>0.81 / 0.86</td><td>$0.835</td></tr>
+<tr><td>**Position Type**</td><td>Debit Value: **$0.425**</td></tr>
+<tr><td>**Required Margin**</td><td>**$650**</td></tr>
+<tr><td>**Fast Ratio Math**</td><td>Formula: `(Mid Long Cost +/- Premium) / Margin` <br> Calculation: `(0.835 - 0.41) / 6.50 = 6.5%`</td></tr>
+<tr><td>**Fast Ratio Result**</td><td>**6.5%**</td></tr>
+<tr><td>**OpenStrat Link**</td><td><a href="https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260731C300,.IWM260807C302" target="_blank">Analyze Position on OptionStrat</a></td></tr>
+</table>
+<p></p>
+<p>* **Underlying Stock Price:** $292.84</p>
+<p>* **Expected Move:** $5.90 (Short), $8.70 (Long)</p>
+<p>* **Short Leg:** Fri Jul 31 2026 Strike 300.00 Call (Delta: 0.135, IV: 19.9%, OI: 16371)</p>
+<p>* **Long Leg:** Fri Aug 07 2026 Strike 302.00 Call (IV: 17.7%, OI: 2553)</p>
+<p>* **Position Type:** Debit of $0.425 ($42.50 per contract)</p>
+<p>* **Required Margin:** $650</p>
+<p>* **Fast Ratio:** 6.5%</p>
+<table>
+<tr><th>* **Individual Spreads:** Short Leg Spread: $0.04</th><th>Long Leg Spread: $0.05</th></tr>
+</table>
+<p>* **Earnings Week:** No</p>
+<p>* **Type:** DEBIT</p>
+<br>
+<p>---</p>
+<br>
+<h3>B - IWM Weekly Call DACS-3.0 (Setup 2)</h3>
+<p>> *Note: Start the title with 'B' if the position is in Backwardation, or 'C' if it is in Contango.*</p>
+<br>
+<table>
+<tr><th>Leg / Metric</th><th>Date (Expiry)</th><th>Type (Call/Put)</th><th>Strike</th><th>Delta</th><th>IV</th><th>Bid/Ask</th><th>Mid Cost</th></tr>
+<tr><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td></tr>
+<tr><td>**Short Leg**</td><td>07-31</td><td>Call</td><td>301</td><td>0.099</td><td>19.5%</td><td>0.26 / 0.29</td><td>$0.275</td></tr>
+<tr><td>**Long Leg**</td><td>08-07</td><td>Call</td><td>303</td><td>0.146</td><td>17.4%</td><td>0.63 / 0.67</td><td>$0.65</td></tr>
+<tr><td>**Position Type**</td><td>Debit Value: **$0.375**</td></tr>
+<tr><td>**Required Margin**</td><td>**$800**</td></tr>
+<tr><td>**Fast Ratio Math**</td><td>Formula: `(Mid Long Cost +/- Premium) / Margin` <br> Calculation: `(0.65 - 0.275) / 8.00 = 4.7%`</td></tr>
+<tr><td>**Fast Ratio Result**</td><td>**4.7%**</td></tr>
+<tr><td>**OpenStrat Link**</td><td><a href="https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260731C301,.IWM260807C303" target="_blank">Analyze Position on OptionStrat</a></td></tr>
+</table>
+<p></p>
+<p>* **Underlying Stock Price:** $292.84</p>
+<p>* **Expected Move:** $5.90 (Short), $8.70 (Long)</p>
+<p>* **Short Leg:** Fri Jul 31 2026 Strike 301.00 Call (Delta: 0.099, IV: 19.5%, OI: 2074)</p>
+<p>* **Long Leg:** Fri Aug 07 2026 Strike 303.00 Call (IV: 17.4%, OI: 472)</p>
+<p>* **Position Type:** Debit of $0.375 ($37.50 per contract)</p>
+<p>* **Required Margin:** $800</p>
+<p>* **Fast Ratio:** 4.7%</p>
+<table>
+<tr><th>* **Individual Spreads:** Short Leg Spread: $0.03</th><th>Long Leg Spread: $0.04</th></tr>
+</table>
+<p>* **Earnings Week:** No</p>
+<p>* **Type:** DEBIT</p>
+<br>
+<p>---</p>
+<br>
+<h3>B - IWM Weekly Call DACS-3.0 (Setup 3)</h3>
+<p>> *Note: Start the title with 'B' if the position is in Backwardation, or 'C' if it is in Contango.*</p>
+<br>
+<table>
+<tr><th>Leg / Metric</th><th>Date (Expiry)</th><th>Type (Call/Put)</th><th>Strike</th><th>Delta</th><th>IV</th><th>Bid/Ask</th><th>Mid Cost</th></tr>
+<tr><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td></tr>
+<tr><td>**Short Leg**</td><td>07-30</td><td>Call</td><td>300</td><td>0.095</td><td>19.6%</td><td>0.21 / 0.24</td><td>$0.225</td></tr>
+<tr><td>**Long Leg**</td><td>08-06</td><td>Call</td><td>302</td><td>0.151</td><td>16.9%</td><td>0.60 / 0.65</td><td>$0.625</td></tr>
+<tr><td>**Position Type**</td><td>Debit Value: **$0.40**</td></tr>
+<tr><td>**Required Margin**</td><td>**$670**</td></tr>
+<tr><td>**Fast Ratio Math**</td><td>Formula: `(Mid Long Cost +/- Premium) / Margin` <br> Calculation: `(0.625 - 0.225) / 6.70 = 6.0%`</td></tr>
+<tr><td>**Fast Ratio Result**</td><td>**6.0%**</td></tr>
+<tr><td>**OpenStrat Link**</td><td><a href="https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260730C300,.IWM260806C302" target="_blank">Analyze Position on OptionStrat</a></td></tr>
+</table>
+<p></p>
+<p>* **Underlying Stock Price:** $292.84</p>
+<p>* **Expected Move:** $5.08 (Short), $8.04 (Long)</p>
+<p>* **Short Leg:** Thu Jul 30 2026 Strike 300.00 Call (Delta: 0.095, IV: 19.6%, OI: 1905)</p>
+<p>* **Long Leg:** Thu Aug 06 2026 Strike 302.00 Call (IV: 16.9%, OI: 17)</p>
+<p>* **Position Type:** Debit of $0.40 ($40.00 per contract)</p>
+<p>* **Required Margin:** $670</p>
+<p>* **Fast Ratio:** 6.0%</p>
+<table>
+<tr><th>* **Individual Spreads:** Short Leg Spread: $0.03</th><th>Long Leg Spread: $0.05</th></tr>
+</table>
+<p>* **Earnings Week:** No</p>
+<p>* **Type:** DEBIT</p>
+        </div>
+
+        <div class="footer">
+            <p>Generated by DACS 3.0 Analysis System | Powered by Gemini AI</p>
+        </div>
+    </div>
+</body>
+</html>

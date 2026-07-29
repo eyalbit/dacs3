@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DACS 3.0 Analysis - iwm</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+        }
+        .header-info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            direction: ltr;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            direction: ltr;
+        }
+        .no-setups {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            color: #856404;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-info">
+            <h1>📊 DACS 3.0 Options Strategy Analysis</h1>
+            <div class="timestamp">
+                <strong>תיקייה:</strong> iwm<br>
+                <strong>תאריך יצירה:</strong> 28/07/2026 15:36:52<br>
+                <strong>מודל:</strong> Gemini with DACS Instructions
+            </div>
+        </div>
+
+        <div class="content">
+<h3>1. Market & Catalyst Intelligence</h3>
+<p>* נתונים עדכניים ל-28 ביולי 2026: מדד ה-Russell 2000 (IWM) נסחר ברמה של $292.84, עם ירידה קלה של 0.11-. </p>
+<p>* סביבת ה-Implied Volatility (IV) במדד נעס סביב 16%-20%, ומציגה מבנה נאות עבור אסטרטגיות אלכסוניות (Diagonal Spreads). </p>
+<p>* אין דיווחים קריטיים על אירועי מאקרו חריגים או דוחות רווח השבוע עבור קרן הסל עצמה, מה שמאפשר מסחר טכני נקי המבוסס על Expected Move והתנהגות סטייה תקנית.</p>
+<br>
+<p>---</p>
+<br>
+<h3>2. DACS-3.0 (Weekly Strategy) Setups</h3>
+<h3>Strategy Context & Rationale</h3>
+<p>האסטרטגיות נבחרו בקפידה בהתאם לכללי DACS-3.0, תוך שימוש בפקיעות שבועיות צמודות (עבור ה-Short Leg) ופקיעה עוקבת (עבור ה-Long Leg). נשמרו תנאי ה-Delta (בין 0.08 ל-0.15), דרישת ה-Open Interest (מעל 500), וכללי המרווחים המחמירים (Margin בין $500 ל-$1,000) לשם שמירה אופטימלית על ניהול סיכונים.</p>
+<br>
+<p>---</p>
+<br>
+<h3>Positions Table 1</h3>
+<br>
+<table>
+<tr><th>Leg / Metric</th><th>Date (Expiry)</th><th>Type (Call/Put)</th><th>Strike</th><th>Delta</th><th>IV</th><th>Bid/Ask</th><th>Mid Cost</th></tr>
+<tr><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td></tr>
+<tr><td>**Short Leg**</td><td>07-31</td><td>Call</td><td>300</td><td>0.1349</td><td>19.9%</td><td>0.39 / 0.43</td><td>$0.41</td></tr>
+<tr><td>**Long Leg**</td><td>08-07</td><td>Call</td><td>302</td><td>0.1766</td><td>17.7%</td><td>0.81 / 0.86</td><td>$0.835</td></tr>
+<tr><td>**Position Type**</td><td>Debit Value: **$0.425**</td></tr>
+<tr><td>**Required Margin**</td><td>**$650**</td></tr>
+<tr><td>**Fast Ratio Math**</td><td>Formula: `(Mid Long Cost - Debit) / Margin` <br> Calculation: `(0.835 - 0.425) / 6.50`</td></tr>
+<tr><td>**Fast Ratio Result**</td><td>**6.3%**</td></tr>
+<tr><td>**OpenStrat Link**</td><td><a href="https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260731C300,.IWM260807C302" target="_blank">Analyze Position on OptionStrat</a></td></tr>
+</table>
+<p></p>
+<p>* **Type:** DEBIT</p>
+<br>
+<p>---</p>
+<br>
+<h3>Positions Table 2</h3>
+<br>
+<table>
+<tr><th>Leg / Metric</th><th>Date (Expiry)</th><th>Type (Call/Put)</th><th>Strike</th><th>Delta</th><th>IV</th><th>Bid/Ask</th><th>Mid Cost</th></tr>
+<tr><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td></tr>
+<tr><td>**Short Leg**</td><td>07-31</td><td>Call</td><td>301</td><td>0.0992</td><td>19.5%</td><td>0.26 / 0.29</td><td>$0.275</td></tr>
+<tr><td>**Long Leg**</td><td>08-07</td><td>Call</td><td>303</td><td>0.1461</td><td>17.4%</td><td>0.63 / 0.67</td><td>$0.65</td></tr>
+<tr><td>**Position Type**</td><td>Debit Value: **$0.375**</td></tr>
+<tr><td>**Required Margin**</td><td>**$750**</td></tr>
+<tr><td>**Fast Ratio Math**</td><td>Formula: `(Mid Long Cost - Debit) / Margin` <br> Calculation: `(0.65 - 0.375) / 7.50`</td></tr>
+<tr><td>**Fast Ratio Result**</td><td>**3.7%**</td></tr>
+<tr><td>**OpenStrat Link**</td><td><a href="https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260731C301,.IWM260807C303" target="_blank">Analyze Position on OptionStrat</a></td></tr>
+</table>
+<p></p>
+<p>* **Type:** DEBIT</p>
+<br>
+<p>---</p>
+<br>
+<h3>Positions Table 3</h3>
+<br>
+<table>
+<tr><th>Leg / Metric</th><th>Date (Expiry)</th><th>Type (Call/Put)</th><th>Strike</th><th>Delta</th><th>IV</th><th>Bid/Ask</th><th>Mid Cost</th></tr>
+<tr><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td></tr>
+<tr><td>**Short Leg**</td><td>07-30</td><td>Call</td><td>300</td><td>0.0946</td><td>19.5%</td><td>0.21 / 0.24</td><td>$0.225</td></tr>
+<tr><td>**Long Leg**</td><td>08-06</td><td>Call</td><td>302</td><td>0.1505</td><td>16.9%</td><td>0.60 / 0.65</td><td>$0.625</td></tr>
+<tr><td>**Position Type**</td><td>Debit Value: **$0.40**</td></tr>
+<tr><td>**Required Margin**</td><td>**$700**</td></tr>
+<tr><td>**Fast Ratio Math**</td><td>Formula: `(Mid Long Cost - Debit) / Margin` <br> Calculation: `(0.625 - 0.40) / 7.00`</td></tr>
+<tr><td>**Fast Ratio Result**</td><td>**3.2%**</td></tr>
+<tr><td>**OpenStrat Link**</td><td><a href="https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260730C300,.IWM260806C302" target="_blank">Analyze Position on OptionStrat</a></td></tr>
+</table>
+<p></p>
+<p>* **Type:** DEBIT</p>
+        </div>
+
+        <div class="footer">
+            <p>Generated by DACS 3.0 Analysis System | Powered by Gemini AI</p>
+        </div>
+    </div>
+</body>
+</html>

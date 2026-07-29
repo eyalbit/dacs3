@@ -1,0 +1,58 @@
+### 1. Market & Catalyst Intelligence
+* נתונים עדכניים ל-28 ביולי 2026: מדד ה-Russell 2000 (IWM) נסחר ברמה של $292.84, עם ירידה קלה של 0.11-. 
+* סביבת ה-Implied Volatility (IV) במדד נעס סביב 16%-20%, ומציגה מבנה נאות עבור אסטרטגיות אלכסוניות (Diagonal Spreads). 
+* אין דיווחים קריטיים על אירועי מאקרו חריגים או דוחות רווח השבוע עבור קרן הסל עצמה, מה שמאפשר מסחר טכני נקי המבוסס על Expected Move והתנהגות סטייה תקנית.
+
+---
+
+### 2. DACS-3.0 (Weekly Strategy) Setups
+### Strategy Context & Rationale
+האסטרטגיות נבחרו בקפידה בהתאם לכללי DACS-3.0, תוך שימוש בפקיעות שבועיות צמודות (עבור ה-Short Leg) ופקיעה עוקבת (עבור ה-Long Leg). נשמרו תנאי ה-Delta (בין 0.08 ל-0.15), דרישת ה-Open Interest (מעל 500), וכללי המרווחים המחמירים (Margin בין $500 ל-$1,000) לשם שמירה אופטימלית על ניהול סיכונים.
+
+---
+
+### Positions Table 1
+
+| Leg / Metric | Date (Expiry) | Type (Call/Put) | Strike | Delta | IV | Bid/Ask | Mid Cost |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Short Leg** | 07-31 | Call | 300 | 0.1349 | 19.9% | 0.39 / 0.43 | $0.41 |
+| **Long Leg** | 08-07 | Call | 302 | 0.1766 | 17.7% | 0.81 / 0.86 | $0.835 |
+| **Position Type** | Debit Value: **$0.425** | | | | | | |
+| **Required Margin**| **$650** | | | | | | |
+| **Fast Ratio Math**| Formula: `(Mid Long Cost - Debit) / Margin` <br> Calculation: `(0.835 - 0.425) / 6.50` | | | | | | |
+| **Fast Ratio Result**| **6.3%** | | | | | | |
+| **OpenStrat Link** | [Analyze Position on OptionStrat](https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260731C300,.IWM260807C302) | | | | | | |
+
+* **Type:** DEBIT
+
+---
+
+### Positions Table 2
+
+| Leg / Metric | Date (Expiry) | Type (Call/Put) | Strike | Delta | IV | Bid/Ask | Mid Cost |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Short Leg** | 07-31 | Call | 301 | 0.0992 | 19.5% | 0.26 / 0.29 | $0.275 |
+| **Long Leg** | 08-07 | Call | 303 | 0.1461 | 17.4% | 0.63 / 0.67 | $0.65 |
+| **Position Type** | Debit Value: **$0.375** | | | | | | |
+| **Required Margin**| **$750** | | | | | | |
+| **Fast Ratio Math**| Formula: `(Mid Long Cost - Debit) / Margin` <br> Calculation: `(0.65 - 0.375) / 7.50` | | | | | | |
+| **Fast Ratio Result**| **3.7%** | | | | | | |
+| **OpenStrat Link** | [Analyze Position on OptionStrat](https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260731C301,.IWM260807C303) | | | | | | |
+
+* **Type:** DEBIT
+
+---
+
+### Positions Table 3
+
+| Leg / Metric | Date (Expiry) | Type (Call/Put) | Strike | Delta | IV | Bid/Ask | Mid Cost |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Short Leg** | 07-30 | Call | 300 | 0.0946 | 19.5% | 0.21 / 0.24 | $0.225 |
+| **Long Leg** | 08-06 | Call | 302 | 0.1505 | 16.9% | 0.60 / 0.65 | $0.625 |
+| **Position Type** | Debit Value: **$0.40** | | | | | | |
+| **Required Margin**| **$700** | | | | | | |
+| **Fast Ratio Math**| Formula: `(Mid Long Cost - Debit) / Margin` <br> Calculation: `(0.625 - 0.40) / 7.00` | | | | | | |
+| **Fast Ratio Result**| **3.2%** | | | | | | |
+| **OpenStrat Link** | [Analyze Position on OptionStrat](https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260730C300,.IWM260806C302) | | | | | | |
+
+* **Type:** DEBIT

@@ -1,0 +1,24 @@
+﻿# Table Structure & Formatting Protocol (עסקה לדוגמא)
+You must present every selected DACS-3.0 and DACS-1 position in a dedicated, individual Markdown table using the exact structure below. Do NOT merge multiple setups into a single table.
+
+
+## Table Template Specification
+Each table must contain exactly the following rows and columns to break down the Short leg, Long leg, and position metrics:
+
+
+| Leg / Metric | Date (Expiry) | Type (Call/Put) | Strike | Delta | IV | Bid/Ask | Mid Cost |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Short Leg** | MM-DD | Call / Put | XXX | X.XXX | XX.X% | Bid | $X.XX |
+| **Long Leg** | MM-DD | Call / Put | XXX | X.XXX | XX.X% | Ask | $X.XX |
+| **Position Type** | [Credit / Debit] Value: **$X.XX** | | | | | | |
+| **Required Margin**| **$XXX** | | | | | | |
+| **Fast Ratio Math**| Formula: `(Mid Long Cost +/- Premium) / Margin` <br> Calculation: `(X.XX + X.XX) / X.XX` | | | | | | |
+| **Fast Ratio Result**| **XX.X%** | | | | | | |
+| **OpenStrat Link** | [Analyze Position on OptionStrat](URL) | | | | | | |
+
+
+## Rules for Table Execution:
+1. **No Placeholders:** Replace all placeholders (e.g., MM-DD, XXX, X.XX) with real, raw data calculated from the `merged_delta.csv` file.
+2. **Fast Ratio Math Row:** You must explicitly print the numbers inside the calculation text so the user can verify the math. 
+   - *Example:* If Mid Long Cost is 2.24, Debit is 0.05, and Margin is 500, print: `(2.24 + 0.05) / 5.00 = 45.8%`.
+3. **Link Integration:** The final row of EVERY table must contain the dynamic OpenStrat link formatted as a markdown hyperlink.

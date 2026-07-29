@@ -1,0 +1,44 @@
+﻿# OpenStrat URL Construction Protocol
+For every generated position, you must dynamically construct a tracking link to OptionStrat. Follow these strict syntax rules carefully to avoid broken URLs:
+
+
+## 1. Base URL Selection
+- For CALL positions: Use `https://optionstrat.com/build/diagonal-call-spread/[TICKER]/`
+- For PUT positions: Use `https://optionstrat.com/build/diagonal-put-spread/[TICKER]/`
+*(Replace `[TICKER]` with the uppercase stock symbol, e.g., DIA, AAPL, TSLA).*
+
+
+## 2. String Component Formatting
+The legs parameters must be appended directly to the Base URL using this exact format:
+`-.ShortLegParams,.LongLegParams`
+
+
+### Leg Parameters Structure: `[TICKER][YYMMDD][C/P][STRIKE]`
+- **TICKER:** The uppercase stock symbol.
+- **YYMMDD:** 6-digit date format extracted from the option expiration (Year, Month, Day). 
+  - *Example: July 10, 2026 -> 260710*
+- **C/P:** Use `C` for Call options, or `P` for Put options.
+- **STRIKE:** The exact strike price number (integer without decimals if it's a whole number, e.g., 530).
+
+
+### Crucial Syntax Rules:
+- **Short Leg Prefix:** Must ALWAYS start with a minus and a dot: `-.` (This indicates a short position).
+- **Long Leg Prefix:** Must ALWAYS start with a dot only: `.` (This indicates a long position).
+- **Separator:** The short leg and long leg parameters MUST be separated by a single comma `,`. Do NOT use semicolons or spaces.
+
+
+## 3. Concrete Examples for Validation
+- **Example 1 (DIA Call Setup):** 
+  - Ticker: DIA | Short Expiry: 260710 | Short Strike: 530
+  - Long Expiry: 260731 | Long Strike: 535
+  - *Resulting URL:* `https://optionstrat.com/build/diagonal-call-spread/DIA/-.DIA260710C530,.DIA260731C535`
+
+
+- **Example 2 (AAPL Put Setup):**
+  - Ticker: AAPL | Short Expiry: 260814 | Short Strike: 170
+  - Long Expiry: 260911 | Long Strike: 165
+  - *Resulting URL:* `https://optionstrat.com/build/diagonal-put-spread/AAPL/-.AAPL260814P170,.AAPL260911P165`
+
+
+## 4. Output Execution
+Insert the final complete URL into the "OpenStrat Link" column of the summary table as a standard markdown hyperlink: `[Analyze Position](URL)`. Ensure no placeholders or raw formulas are printed in the final output.

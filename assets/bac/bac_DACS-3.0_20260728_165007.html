@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DACS 3.0 Analysis - bac</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+        }
+        .header-info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            direction: ltr;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            direction: ltr;
+        }
+        .no-setups {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            color: #856404;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-info">
+            <h1>📊 DACS 3.0 Options Strategy Analysis</h1>
+            <div class="timestamp">
+                <strong>תיקייה:</strong> bac<br>
+                <strong>תאריך יצירה:</strong> 28/07/2026 16:50:07<br>
+                <strong>מודל:</strong> Gemini with DACS Instructions
+            </div>
+        </div>
+
+        <div class="content">
+<h3>1. Market & Catalyst Intelligence</h3>
+<p>* **סקירת שוק וחדשות (7 הימים האחרונים):** מניית Bank of America (BAC) נסחרת סביב המחיר 62.15$, לאחר דיווחים מאקרו-כלכליים מעורבים בארה"ב וציפיות לקראת החלטות הריבית הקרובות של הפדרל ריזרב. סביבת ה-Implied Volatility (IV) של המניה מתייצבת בטווח שבין 20% ל-26%, המשקף שקט יחסי בשווקים אך עם פוטנציאל תנודתיות סביב פרסום נתוני האינפלציה והתעסוקה הקרובים. אין דיווחי Earnings קרובים בשבוע הקרוב עבור BAC, ולכן אנו פועלים תחת תנאי המסחר הסטנדרטיים (Standard Condition).</p>
+<br>
+<p>---</p>
+<br>
+<h3>2. DACS-3.0 (Weekly Strategy) Setups</h3>
+<h3>Strategy Context & Rationale</h3>
+<p>להלן אסטרטגיות DACS-3.0 (Weekly) שנבנו בצד ה-Call על בסיס נתוני השרשרת, תוך הקפדה על כללי ה-Delta, נתוני ה-Open Interest הגבוהים (>500), דרישות ה-Margin וציפיות ה-Expected Move. כל העסקאות נבחרו מתוך מבנה Term Structure התומך בפעילות חיובית של Positive Vega.</p>
+<br>
+<p>---</p>
+<br>
+<h3># פוזיציה 1 (הטובה ביותר לפי ה-Fast Ratio)</h3>
+<table>
+<tr><th>Leg / Metric</th><th>Date (Expiry)</th><th>Type (Call/Put)</th><th>Strike</th><th>Delta</th><th>IV</th><th>Bid/Ask</th><th>Mid Cost</th></tr>
+<tr><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td><td>:---</td></tr>
+<tr><td>**Short Leg**</td><td>07-31</td><td>Call</td><td>64.00</td><td>0.141</td><td>26.4%</td><td>0.09 / 0.11</td><td>$0.10</td></tr>
+<tr><td>**Long Leg**</td><td>08-07</td><td>Call</td><td>65.00</td><td>0.145</td><td>22.0%</td><td>0.11 / 0.17</td><td>$0.14</td></tr>
+<tr><td>**Position Type**</td><td>Debit Value: **$0.04**</td></tr>
+<tr><td>**Required Margin**</td><td>**$100**</td></tr>
+<tr><td>**Fast Ratio Math**</td><td>Formula: `(Mid Long Cost +/- Premium) / Margin` <br> Calculation: `(0.14 - 0.10) / 1.00`</td></tr>
+<tr><td>**Fast Ratio Result**</td><td>**4.0%**</td></tr>
+<tr><td>**OpenStrat Link**</td><td><a href="https://optionstrat.com/build/diagonal-call-spread/BAC/-.BAC260731C64,.BAC260807C65" target="_blank">Analyze Position on OptionStrat</a></td></tr>
+</table>
+<p></p>
+<p>---</p>
+<br>
+<p>*הערה: נתוני השרשרת שסופקו עבור שבועיות אלו מייצגים את המבנה האופטימלי ביותר שזמין תחת סינון ה-Delta (0.07-0.21) ועמידה בתנאי הליקוידיות ודרישות ה-Margin המוגבלות (עד 1,500$).*</p>
+        </div>
+
+        <div class="footer">
+            <p>Generated by DACS 3.0 Analysis System | Powered by Gemini AI</p>
+        </div>
+    </div>
+</body>
+</html>

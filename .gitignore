@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environment variables
+.env
+.env.local
+
+# Gemini cache
+agent-docs/.gemini_files_cache.json
+
+# CSV outputs
+bac/merged_filtered_options.csv
+
+# HTML reports
+bac/*_DACS-3.0_*.html
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
