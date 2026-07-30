@@ -77,10 +77,21 @@ jobs:
           echo "Running Barchart Screener..."
           npm run screener 2>&1 | tee screener.log
 
+          echo "=== Screener Log (last 50 lines) ==="
+          tail -50 screener.log
+
           # Extract symbols count
           SYMBOLS=$(grep -oP 'Symbols found: \K\d+' screener.log || echo "0")
           echo "symbols_count=$SYMBOLS" >> $GITHUB_OUTPUT
           echo "✓ Found $SYMBOLS symbols"
+
+          # Check if assets folder was created
+          if [ -d "../assets" ]; then
+            echo "Assets folders created:"
+            ls -la ../assets/ | grep "^d" || echo "No asset folders"
+          else
+            echo "⚠️ Assets folder was not created!"
+          fi
 
       - name: Run DACS Analysis
         id: analysis

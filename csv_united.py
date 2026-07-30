@@ -1225,7 +1225,10 @@ All rules and protocols from these documents must be followed as specified in th
 def _get_all_asset_folders():
     """Get all folders under BASE_ASSETS_FOLDER that contain CSV files."""
     if not os.path.isdir(BASE_ASSETS_FOLDER):
-        raise FileNotFoundError(f'Assets folder not found: {BASE_ASSETS_FOLDER}')
+        # Create assets folder if it doesn't exist (e.g., first run)
+        print(f'[i] Assets folder does not exist, creating: {BASE_ASSETS_FOLDER}')
+        os.makedirs(BASE_ASSETS_FOLDER, exist_ok=True)
+        return []  # No assets yet
 
     asset_folders = []
     for item in os.listdir(BASE_ASSETS_FOLDER):
