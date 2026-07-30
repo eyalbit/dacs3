@@ -15,8 +15,16 @@ You MUST use your internal Python Code Execution tool to process the files[cite:
 - Extract the Current Stock Price from the file metadata if available, or determine it from the At-The-Money (ATM) strike[cite: 3].
 
 
-## 2. Extract All Expiration Dates
-- Extract and process all available expiration dates across all input files[cite: 3]. Do not apply any date filtering criteria at this stage[cite: 3].
+## 2. Extract All Expiration Dates & Apply DTE Filter
+- Extract and process all available expiration dates across all input files[cite: 3].
+- CRITICAL DTE FILTER: Remove entire expiration dates where Days To Expiration (DTE) < 3 days[cite: 3].
+  * These dates cannot be used as Short Leg (DACS-3.0 requires Short Leg DTE between 3-7 days)[cite: 3].
+  * Keep all dates with DTE >= 3 days (they can be used as Short Leg or Long Leg)[cite: 3].
+  * Example: If today is July 30, 2026:
+    - July 31, 2026 (DTE=1) → REMOVE completely
+    - August 1, 2026 (DTE=2) → REMOVE completely
+    - August 2, 2026 (DTE=3) → KEEP (valid for Short Leg)
+    - August 7, 2026 (DTE=8) → KEEP (valid for Long Leg)
 
 
 ## 3. Apply Delta & Expected Move Filter Criteria

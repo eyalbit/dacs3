@@ -47,12 +47,14 @@ AGENT_DOCS_FOLDER = 'agent-docs'     # Folder containing instruction documents
 
 # ===== Email Configuration =====
 EMAIL_TO = 'eb.bitan@gmail.com'      # Email address to send reports to
-AUTO_SEND_EMAIL = False               # Automatically send email with HTML report (True/False)
+AUTO_SEND_EMAIL = True               # Automatically send email with HTML report (True/False)
 
 # ===== Options Filtering Rules (used by Python code) =====
 DELTA_MIN = 0.07                     # Minimum Delta for CALL options (used in _filter_rows)
 DELTA_MAX = 0.21                     # Maximum Delta for CALL options (used in _filter_rows)
 MIN_OPEN_INTEREST = 500              # Minimum Open Interest threshold (for future use)
+MIN_DTE_DAYS_SHORT_LEG = 3           # Minimum Days To Expiration for Short Leg (DACS-3.0 rule)
+                                     # Filter out expirations < 3 days since they cannot be used as Short Leg
 
 # ===== CSV Column Configuration =====
 # Column indices in the original CSV (before Expected Move insertion)
@@ -117,6 +119,50 @@ def _extract_current_price(lines):
     return None
 
 
+def _parse_expiration_date(exp_date_str):
+    """
+    Parse expiration date string and return datetime object.
+    Expected format: 'Fri Jul 31 2026' or similar CBOE format.
+    """
+    from datetime import datetime
+
+    if not exp_date_str or not isinstance(exp_date_str, str):
+        return None
+
+    try:
+        # Try parsing format like 'Fri Jul 31 2026'
+        exp_date_str = exp_date_str.strip()
+        # Remove day of week if present
+        parts = exp_date_str.split()
+        if len(parts) >= 4:
+            # Format: 'Fri Jul 31 2026'
+            date_str = ' '.join(parts[1:])  # 'Jul 31 2026'
+            return datetime.strptime(date_str, '%b %d %Y')
+        elif len(parts) == 3:
+            # Format: 'Jul 31 2026'
+            return datetime.strptime(exp_date_str, '%b %d %Y')
+    except (ValueError, IndexError):
+        pass
+
+    return None
+
+
+def _calculate_dte(exp_date_str):
+    """
+    Calculate Days To Expiration from expiration date string.
+    Returns number of days from today to expiration date.
+    """
+    from datetime import datetime
+
+    exp_date = _parse_expiration_date(exp_date_str)
+    if exp_date is None:
+        return None
+
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    dte = (exp_date - today).days
+    return dte
+
+
 def _load_csv_rows(file_path):
     with open(file_path, 'r', encoding='utf-8', newline='') as handle:
         rows = [row for row in csv.reader(handle) if row and any(cell.strip() for cell in row)]
@@ -179,6 +225,15 @@ def _filter_rows(rows, current_price=None):
     filtered_rows = []
     for exp_date in exp_dates:
         exp_rows = grouped_rows[exp_date]
+
+        # Check DTE (Days To Expiration) - filter out expirations that are too soon for Short Leg
+        # We only filter out DTE < MIN_DTE_DAYS_SHORT_LEG (too soon to be a Short Leg)
+        # We keep longer DTE dates since they can be used as Long Leg (+7 days from Short)
+        dte = _calculate_dte(exp_date)
+        if dte is not None and dte < MIN_DTE_DAYS_SHORT_LEG:
+            # Skip this expiration date - it's too soon (cannot be used as Short Leg)
+            print(f'  [FILTERED] Skipping {exp_date} (DTE={dte} days, minimum required: {MIN_DTE_DAYS_SHORT_LEG} days)')
+            continue
 
         # Calculate Expected Move for this expiration
         expected_move = _calculate_expected_move(exp_rows, current_price) if current_price is not None else None
@@ -707,6 +762,7 @@ def _markdown_to_html(text):
 def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=None, smtp_server=None, smtp_port=587, smtp_password=None):
     """
     Send HTML report via email using Gmail SMTP.
+    Also attaches all other files (CSV, etc.) from the same folder.
 
     Args:
         html_file_path: Path to the HTML report file
@@ -747,31 +803,53 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
         filename = os.path.basename(html_file_path)
         asset_name = filename.split('_')[0].upper()
 
+        # Get the folder containing the HTML file
+        asset_folder = os.path.dirname(html_file_path)
+
         # Create message
         msg = MIMEMultipart()
         msg['From'] = from_email
         msg['To'] = to_email
         msg['Subject'] = f'DACS-3.0 Analysis Report - {asset_name}'
 
+        # Collect all files to attach
+        files_to_attach = []
+        if os.path.isdir(asset_folder):
+            for item in os.listdir(asset_folder):
+                item_path = os.path.join(asset_folder, item)
+                if os.path.isfile(item_path):
+                    files_to_attach.append(item_path)
+
         # Email body
         body = f"""
 DACS-3.0 Options Strategy Analysis Report
 
 Asset: {asset_name}
-Report attached: {filename}
+Report: {filename}
 
+Attached files ({len(files_to_attach)}):
+"""
+        for f in files_to_attach:
+            body += f"  - {os.path.basename(f)}\n"
+
+        body += """
 This is an automated report generated by the DACS-3.0 analysis system.
 """
         msg.attach(MIMEText(body, 'plain'))
 
-        # Attach HTML file
-        with open(html_file_path, 'rb') as attachment:
-            part = MIMEBase('application', 'octet-stream')
-            part.set_payload(attachment.read())
+        # Attach all files from the folder
+        print(f'  Attaching {len(files_to_attach)} files...')
+        for file_path in files_to_attach:
+            file_name = os.path.basename(file_path)
+            print(f'    - {file_name}')
 
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f'attachment; filename={filename}')
-        msg.attach(part)
+            with open(file_path, 'rb') as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', f'attachment; filename={file_name}')
+            msg.attach(part)
 
         # Send email - try both ports
         print(f'Sending email to {to_email}...')
@@ -969,10 +1047,25 @@ def send_to_gem(file_path=None, folder=DEFAULT_FOLDER, api_key=None, prompt=None
         model = os.environ.get('GEMINI_MODEL', GEMINI_DEFAULT_MODEL)
 
     if prompt is None:
-        prompt = '''Analyze the attached CSV file and build DACS-3.0 strategies ONLY.
+        # Get today's date for DTE context
+        from datetime import datetime
+        today_str = datetime.now().strftime('%B %d, %Y')  # e.g., "July 30, 2026"
+
+        prompt = f'''Analyze the attached CSV file and build DACS-3.0 strategies ONLY.
+
+TODAY'S DATE: {today_str}
+
+CRITICAL DTE VALIDATION (MUST FOLLOW):
+- Before selecting any Short Leg, calculate its Days To Expiration (DTE)
+- Short Leg DTE MUST be between 3 to 7 days (inclusive)
+- REJECT any Short Leg with DTE < 3 or DTE > 7
+- Example validation for today ({today_str}):
+  * If expiration is tomorrow (DTE=1 or 2): INVALID - too soon
+  * If expiration is 3-7 days away: VALID for Short Leg
+  * If expiration is 8+ days away: INVALID for Short Leg (but valid for Long Leg)
 
 CRITICAL: Follow ALL rules from the instruction documents exactly, including:
-- Short Leg DTE requirements
+- Short Leg DTE requirements (3-7 days, validated above)
 - Delta ranges (normal vs earnings week)
 - Open Interest minimums
 - Margin targets and limits
@@ -1096,62 +1189,268 @@ All rules and protocols from these documents must be followed as specified in th
         raise RuntimeError(f'Gemini request failed: {exc.reason}') from exc
 
 
+def _get_all_asset_folders():
+    """Get all folders under BASE_ASSETS_FOLDER that contain CSV files."""
+    if not os.path.isdir(BASE_ASSETS_FOLDER):
+        raise FileNotFoundError(f'Assets folder not found: {BASE_ASSETS_FOLDER}')
+
+    asset_folders = []
+    for item in os.listdir(BASE_ASSETS_FOLDER):
+        folder_path = os.path.join(BASE_ASSETS_FOLDER, item)
+        if os.path.isdir(folder_path):
+            # Check if folder contains CSV files (excluding merged files)
+            csv_files = _list_csv_files(folder_path)
+            if csv_files:
+                asset_folders.append(folder_path)
+
+    return sorted(asset_folders)
+
+
+def scrape_and_process_all(scrape_first=True, merge_only=False):
+    """
+    Scrape data from web (optional) then process all assets.
+
+    NOTE: Scraping is now done via TypeScript scraper (scraper-ts/).
+    This function expects CSV files to already exist in assets/ folders.
+
+    Args:
+        scrape_first: If True, run TypeScript scraper first (default: True)
+        merge_only: If True, only merge CSVs without Gemini analysis (default: False)
+
+    Returns:
+        dict: Processing results for each asset
+    """
+    import shutil
+    import subprocess
+
+    # STEP 0: Clean assets folder before starting
+    print('\n' + '='*80)
+    print('STEP 0: CLEANING ASSETS FOLDER')
+    print('='*80)
+
+    if os.path.isdir(BASE_ASSETS_FOLDER):
+        cleaned_count = 0
+
+        for item in os.listdir(BASE_ASSETS_FOLDER):
+            item_path = os.path.join(BASE_ASSETS_FOLDER, item)
+
+            # Skip the 'bac' folder (backup reference)
+            if item.lower() == 'bac':
+                print(f'[i] Skipping backup folder: {item}')
+                continue
+
+            # Delete everything else
+            if os.path.isdir(item_path):
+                try:
+                    shutil.rmtree(item_path)
+                    print(f'[OK] Deleted folder: {item}')
+                    cleaned_count += 1
+                except Exception as exc:
+                    print(f'[!] Failed to delete {item}: {exc}')
+            elif os.path.isfile(item_path):
+                try:
+                    os.remove(item_path)
+                    print(f'[OK] Deleted file: {item}')
+                    cleaned_count += 1
+                except Exception as exc:
+                    print(f'[!] Failed to delete {item}: {exc}')
+
+        print(f'[OK] Cleaned {cleaned_count} items from assets/')
+    else:
+        print(f'[i] Assets folder does not exist, creating: {BASE_ASSETS_FOLDER}')
+        os.makedirs(BASE_ASSETS_FOLDER, exist_ok=True)
+
+    if scrape_first:
+        print('\n' + '='*80)
+        print('STEP 1: SCRAPING FRESH DATA')
+        print('='*80)
+
+        try:
+            scraper_dir = os.path.join(os.path.dirname(__file__), 'scraper-ts')
+
+            if os.path.isdir(scraper_dir):
+                print('[i] Running Barchart Screener...')
+                result = subprocess.run(
+                    ['npm', 'run', 'screener'],
+                    cwd=scraper_dir,
+                    capture_output=True,
+                    text=True
+                )
+
+                if result.returncode == 0:
+                    print('[OK] TypeScript scraper completed successfully')
+                else:
+                    print(f'[!] TypeScript scraper failed: {result.stderr}')
+                    print('[i] Processing will use existing CSV files.')
+            else:
+                print('[!] TypeScript scraper not found at: scraper-ts/')
+                print('[i] To use scraper: cd scraper-ts && npm install && npm run build')
+                print('[i] Processing will use existing CSV files.')
+
+        except FileNotFoundError:
+            print('[!] npm not found. Install Node.js to use TypeScript scraper.')
+            print('[i] Processing will use existing CSV files.')
+        except Exception as exc:
+            print(f'[!] Scraping failed: {exc}')
+            print('[i] Processing will use existing CSV files.')
+
+    print('\n' + '='*80)
+    print('STEP 2: PROCESSING ASSETS')
+    print('='*80)
+
+    return process_all_assets(merge_only=merge_only)
+
+
+def process_all_assets(merge_only=False):
+    """Process all asset folders: merge CSVs, run Gemini analysis, create HTML, send email."""
+    asset_folders = _get_all_asset_folders()
+
+    if not asset_folders:
+        print(f'[X] No asset folders with CSV files found in {BASE_ASSETS_FOLDER}')
+        return
+
+    print(f'\n[i] Found {len(asset_folders)} asset folders to process:')
+    for folder in asset_folders:
+        print(f'    - {os.path.basename(folder)}')
+
+    results = []
+
+    for idx, folder in enumerate(asset_folders, 1):
+        asset_name = os.path.basename(folder)
+        print(f'\n{"="*80}')
+        print(f'Processing asset {idx}/{len(asset_folders)}: {asset_name.upper()}')
+        print(f'{"="*80}')
+
+        try:
+            # Step 1: Merge CSV files
+            print(f'\n=== Step 1: Merging CSV files for {asset_name} ===')
+            output_path = process_csv_folder(folder=folder)
+            print(f'[OK] Merged CSV created: {output_path}')
+
+            if merge_only:
+                results.append({'asset': asset_name, 'status': 'merged', 'path': output_path})
+                continue
+
+            # Step 2: Run Gemini analysis
+            print(f'\n=== Step 2: Running DACS Analysis with Gemini for {asset_name} ===')
+            result = send_to_gem(file_path=output_path, folder=folder)
+
+            # Step 3: Save result as HTML
+            html_path = _save_result_as_html(result, folder=folder)
+            if html_path:
+                print(f'\n[OK] HTML report created: {html_path}')
+
+                # Step 4: Send email (if AUTO_SEND_EMAIL is enabled)
+                email_sent = False
+                if AUTO_SEND_EMAIL:
+                    print(f'\n=== Sending Email for {asset_name} ===')
+                    email_sent = send_email_with_html_report(html_path)
+                    if not email_sent:
+                        print('[!] Email not sent - check your .env file for GMAIL_USER and GMAIL_PASSWORD')
+                else:
+                    print('[i] Email sending disabled (AUTO_SEND_EMAIL=False)')
+
+                results.append({
+                    'asset': asset_name,
+                    'status': 'completed',
+                    'merged_csv': output_path,
+                    'html_report': html_path,
+                    'email_sent': email_sent
+                })
+            else:
+                results.append({
+                    'asset': asset_name,
+                    'status': 'failed',
+                    'error': 'Failed to create HTML report'
+                })
+
+        except Exception as exc:
+            print(f'\n[X] Error processing {asset_name}: {exc}')
+            import traceback
+            traceback.print_exc()
+            results.append({
+                'asset': asset_name,
+                'status': 'error',
+                'error': str(exc)
+            })
+            continue
+
+    # Summary
+    print(f'\n{"="*80}')
+    print('PROCESSING SUMMARY')
+    print(f'{"="*80}')
+    for result in results:
+        status_icon = '[OK]' if result['status'] in ['merged', 'completed'] else '[X]'
+        print(f'{status_icon} {result["asset"].upper()}: {result["status"]}')
+        if result['status'] == 'completed':
+            print(f'    - HTML: {os.path.basename(result["html_report"])}')
+            if result.get('email_sent'):
+                print(f'    - Email: Sent')
+        elif result['status'] == 'error':
+            print(f'    - Error: {result.get("error", "Unknown error")}')
+
+    return results
+
+
 if __name__ == '__main__':
     import sys
 
-    # Default behavior: Use DACS Gem (full analysis with HTML report)
-    # Use --merge-only flag to skip Gemini analysis and only merge CSV files
+    # Command line arguments:
+    # --merge-only: Skip Gemini analysis, only merge CSV files
+    # --no-scrape: Skip scraping, use existing CSV files
+    # --scrape-only: Only scrape data (TypeScript), don't process
     merge_only = '--merge-only' in sys.argv
-
-    print('\n=== Step 1: Merging CSV files ===')
-    output_path = process_csv_folder(folder=DEFAULT_FOLDER)
-    print(f'[OK] Merged CSV created: {output_path}')
-
-    if merge_only:
-        print('\n[i] Merge-only mode completed (use without --merge-only flag for full DACS analysis)')
-        sys.exit(0)
+    no_scrape = '--no-scrape' in sys.argv
+    scrape_only = '--scrape-only' in sys.argv
 
     try:
-        print('\n=== Step 2: Running DACS Analysis with Gemini ===')
-        result = send_to_gem(file_path=output_path, folder=DEFAULT_FOLDER)
+        if scrape_only:
+            # Only scrape with TypeScript, don't process
+            print('\n' + '='*80)
+            print('SCRAPE-ONLY MODE (TypeScript)')
+            print('='*80)
 
-        # Save result as HTML (always)
-        html_path = _save_result_as_html(result, folder=DEFAULT_FOLDER)
-        if html_path:
-            print(f'\n[OK] HTML report created: {html_path}')
+            import subprocess
+            import os
 
-            # Send email with the report (if AUTO_SEND_EMAIL is enabled)
-            if AUTO_SEND_EMAIL:
-                print('\n=== Sending Email ===')
-                email_sent = send_email_with_html_report(html_path)
-                if not email_sent:
-                    print('[!] Email not sent - check your .env file for GMAIL_USER and GMAIL_PASSWORD')
+            scraper_dir = os.path.join(os.path.dirname(__file__), 'scraper-ts')
+
+            if os.path.isdir(scraper_dir):
+                result = subprocess.run(
+                    ['npm', 'run', 'scrape', '--', '--all'],
+                    cwd=scraper_dir
+                )
+
+                if result.returncode == 0:
+                    print('\n[OK] Scraping completed')
+                else:
+                    print('\n[X] Scraping failed')
+                    sys.exit(1)
             else:
-                print('[i] Email sending disabled (AUTO_SEND_EMAIL=False)')
+                print('[X] TypeScript scraper not found at: scraper-ts/')
+                print('    Install: cd scraper-ts && npm install && npm run build')
+                sys.exit(1)
 
-        print('\n=== Gemini Response ===')
-        if 'candidates' in result and result['candidates']:
-            for candidate in result['candidates']:
-                if 'content' in candidate and 'parts' in candidate['content']:
-                    for part in candidate['content']['parts']:
-                        if 'text' in part:
-                            # Handle encoding for Windows console
-                            try:
-                                print(part['text'])
-                            except UnicodeEncodeError:
-                                # Fallback: write to file if console can't display
-                                output_file = 'gemini_response.txt'
-                                with open(output_file, 'w', encoding='utf-8') as f:
-                                    f.write(part['text'])
-                                print(f'[Response saved to {output_file} due to encoding issue]')
-                                print(part['text'].encode('ascii', 'replace').decode('ascii'))
+        elif no_scrape:
+            # Process existing files without scraping
+            results = process_all_assets(merge_only=merge_only)
+
+            if merge_only:
+                print('\n[i] Merge-only mode completed (run without --merge-only for full DACS analysis)')
+            else:
+                print('\n[i] All assets processed successfully')
+
         else:
-            print(json.dumps(result, indent=2, ensure_ascii=False))
-    except RuntimeError as exc:
-        print(f'\nError: {exc}')
-        sys.exit(1)
+            # Default: Scrape fresh data (TypeScript), then process
+            results = scrape_and_process_all(scrape_first=True, merge_only=merge_only)
+
+            if merge_only:
+                print('\n[i] Scrape and merge completed (run without --merge-only for full DACS analysis)')
+            else:
+                print('\n[i] All assets scraped and processed successfully')
+
     except Exception as exc:
-        print(f'\nFailed to send to Gemini: {exc}')
+        print(f'\n[X] Fatal error: {exc}')
         import traceback
         traceback.print_exc()
         sys.exit(1)

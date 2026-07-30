@@ -5,18 +5,37 @@ __pycache__/
 *.so
 .Python
 
-# Environment variables
+# Environment variables (IMPORTANT: contain secrets!)
 .env
 .env.local
+scraper-ts/.env
 
 # Gemini cache
 agent-docs/.gemini_files_cache.json
 
-# CSV outputs
-bac/merged_filtered_options.csv
+# CSV outputs and downloads
+assets/
+!assets/.gitkeep
 
-# HTML reports
-bac/*_DACS-3.0_*.html
+# Logs
+*.log
+full_run.log
+
+# Session cache
+scraper-ts/.auth/
+
+# Node.js
+node_modules/
+scraper-ts/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Playwright
+.playwright/
+scraper-ts/.playwright/
+playwright-report/
+test-results/
 
 # Virtual environments
 venv/
@@ -32,3 +51,7 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Temporary test files
+test_*.py

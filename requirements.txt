@@ -1,0 +1,8 @@
+# Core dependencies for DACS-3.0 Options Analysis System
+
+# NOTE: Web scraping is now done via TypeScript (scraper-ts/)
+# Python dependencies are only for data processing and AI analysis
+
+# Optional: Additional data processing libraries (uncomment if needed)
+# pandas>=2.0.0  # Advanced CSV processing
+# requests>=2.31.0  # HTTP requests

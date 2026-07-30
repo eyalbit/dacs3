@@ -1,4 +1,16 @@
-# DACS 3.0 - מיזוג וניתוח קבצי אופציות
+# DACS 3.0 - מערכת ניתוח אופציות אוטומטית
+
+## 🚀 Quick Start
+
+### הרצה מקומית:
+```bash
+python csv_united.py
+```
+
+### הרצה אוטומטית בענן (GitHub Actions):
+📖 **[GITHUB-QUICKSTART.md](GITHUB-QUICKSTART.md)** - הגדרה ב-5 דקות!
+
+---
 
 ## תיאור
 מערכת לעיבוד קבצי CSV של שרשראות אופציות (Option Chains) ושליחתם לניתוח ב-Gemini AI עם תצורת DACS Gem המלאה.
@@ -168,4 +180,19 @@ python test_csv_united.py
 
 ---
 
-📖 למידע מפורט על שימוש ב-Gem, ראה [GEM_USAGE.md](GEM_USAGE.md)
+## 📚 תיעוד נוסף
+
+- 📖 [GEM_USAGE.md](GEM_USAGE.md) - שימוש ב-Gemini Gem
+- 🚀 [GITHUB-QUICKSTART.md](GITHUB-QUICKSTART.md) - הרצה אוטומטית בענן
+- 📂 [docs/](docs/) - תיעוד מלא (24 מסמכים)
+
+## 🔄 GitHub Actions Pipeline
+
+המערכת יכולה לרוץ **אוטומטית בענן** עם GitHub Actions:
+
+- ✅ **חינמי** - 2,000 דקות/חודש
+- ✅ **אוטומטי** - 3 פעמים בשבוע
+- ✅ **מהימן** - רץ בענן של GitHub
+- ✅ **דוחות** - נשמרים 30 יום
+
+**התחל כאן:** [GITHUB-QUICKSTART.md](GITHUB-QUICKSTART.md)

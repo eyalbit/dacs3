@@ -1,0 +1,43 @@
+{
+  "name": "dacs-scraper",
+  "version": "1.0.0",
+  "description": "DACS-3.0 Options Data Scraper (Playwright TypeScript)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "playwright test",
+    "test:headed": "TEST_HEADLESS=false playwright test",
+    "test:debug": "PWDEBUG=1 playwright test",
+    "test:report": "playwright show-report",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "scrape": "ts-node src/cli.ts",
+    "screener": "ts-node src/cli-screener.ts"
+  },
+  "keywords": [
+    "playwright",
+    "scraper",
+    "options",
+    "trading",
+    "dacs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@playwright/test": "^1.40.0",
+    "playwright": "^1.40.0",
+    "dotenv": "^16.3.1",
+    "csv-writer": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.2",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1"
+  }
+}
