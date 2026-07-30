@@ -106,10 +106,16 @@ jobs:
           echo "Running DACS 3.0 Analysis..."
           python csv_united.py --no-scrape 2>&1 | tee analysis.log
 
-          # Count processed assets
-          ASSETS=$(grep -c '\[OK\].*completed' analysis.log || echo "0")
-          echo "assets_processed=$ASSETS" >> $GITHUB_OUTPUT
-          echo "✓ Processed $ASSETS assets"
+          # Count processed assets (check for success or no-symbols case)
+          if grep -q "NO SYMBOLS FOUND FROM SCREENER" analysis.log; then
+            ASSETS="0"
+            echo "assets_processed=0" >> $GITHUB_OUTPUT
+            echo "✓ No assets to process (no symbols found)"
+          else
+            ASSETS=$(grep -c '\[OK\].*completed' analysis.log || echo "0")
+            echo "assets_processed=${ASSETS}" >> $GITHUB_OUTPUT
+            echo "✓ Processed ${ASSETS} assets"
+          fi
 
       - name: Upload reports as artifacts
         if: always()
