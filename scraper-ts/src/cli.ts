@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
  * CLI Interface for DACS Options Scraper
+ *
+ * ⚠️ DEPRECATED: Use cli-screener.ts instead for dynamic screener-based scraping
+ * This file is kept for backwards compatibility only.
  */
 
 import { OptionsScraper } from './scraper/OptionsScraper';
-import { SUPPORTED_ASSETS } from './config';
 
 interface CliArgs {
   asset?: string;
@@ -41,25 +43,20 @@ function parseArgs(): CliArgs {
 
 function printHelp(): void {
   console.log(`
-DACS Options Scraper CLI
+⚠️  DEPRECATED: This CLI is no longer maintained.
 
-Usage:
-  npm run scrape -- [options]
+Use the Barchart Screener CLI instead:
+  npm run screener
 
-Options:
-  --asset <symbol>     Scrape a single asset (e.g., BAC, SPY)
-  --all                Scrape all supported assets
-  --headless=false     Run browser in visible mode (for debugging)
-  --source <name>      Data source configuration (default: 'default')
+This command dynamically fetches symbols from your Barchart screener
+and scrapes them automatically. No hardcoded asset lists needed.
+
+For manual single-asset scraping (testing only):
+  --asset <symbol>     Scrape a single asset
+  --headless=false     Run browser in visible mode
   --help, -h           Show this help message
 
-Examples:
-  npm run scrape -- --asset BAC
-  npm run scrape -- --all
-  npm run scrape -- --asset SPY --headless=false
-  npm run scrape -- --asset BAC --source cboe
-
-Supported assets: ${SUPPORTED_ASSETS.join(', ')}
+Recommended: Use "npm run screener" for production scraping.
 `);
 }
 
@@ -71,8 +68,10 @@ async function main() {
   });
 
   if (args.all) {
-    // Scrape all assets
-    await scraper.scrapeMultiple(SUPPORTED_ASSETS, args.source);
+    // DEPRECATED: Use screener instead
+    console.error('\n⚠️  ERROR: --all flag is deprecated.');
+    console.error('Use "npm run screener" to dynamically scrape from Barchart screener.\n');
+    process.exit(1);
   } else if (args.asset) {
     // Scrape single asset
     const result = await scraper.scrapeAsset(args.asset, undefined, args.source);

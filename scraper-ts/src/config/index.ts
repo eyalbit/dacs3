@@ -26,9 +26,10 @@ export const DEFAULT_SCRAPER_CONFIG: ScraperConfig = {
 };
 
 /**
- * Supported asset symbols
+ * DEPRECATED: Asset symbols are now dynamically fetched from Barchart screener.
+ * No hardcoded asset list should be used.
+ * Use BarchartScreenerPage.scrapeSymbols() to get dynamic list of assets.
  */
-export const SUPPORTED_ASSETS = ['BAC', 'IWM', 'JPM', 'SPY'];
 
 /**
  * Data source configurations

@@ -7,17 +7,19 @@ using Google's Gemini AI with custom trading instructions.
 USAGE:
     python csv_united.py                 # Full analysis (merge + Gemini + HTML + email)
     python csv_united.py --merge-only    # Only merge CSV files (no Gemini analysis)
+    python csv_united.py --no-scrape     # Skip scraping, use existing CSV files
 
 CONFIGURATION:
     Edit the variables below to customize behavior:
-    - DEFAULT_ASSET: Which asset to analyze (bac, iwm, jpm, spy)
     - DELTA_MIN/MAX: Delta range for filtering CALL options
     - AUTO_SEND_EMAIL: Enable/disable automatic email sending
 
 REQUIREMENTS:
     - .env file with GEMINI_API_KEY (and optionally GMAIL_USER/GMAIL_PASSWORD)
-    - CSV files in assets/{asset}/ folder
+    - CSV files scraped from Barchart screener (assets/{symbol}/ folders)
     - Agent instruction documents in agent-docs/ folder
+
+NOTE: Assets are dynamically scraped from Barchart screener, not hardcoded.
 """
 
 import csv
@@ -40,14 +42,13 @@ from email import encoders
 # =============================================================================
 
 # ===== Folder Paths =====
-DEFAULT_ASSET = 'bac'     # Default asset (bac, iwm, jpm, spy, etc.)
-
-BASE_ASSETS_FOLDER = 'assets'        # Base folder containing all asset folders
+BASE_ASSETS_FOLDER = 'assets'        # Base folder containing all asset folders (dynamically populated by screener)
 AGENT_DOCS_FOLDER = 'agent-docs'     # Folder containing instruction documents
 
 # ===== Email Configuration =====
 EMAIL_TO = 'eb.bitan@gmail.com'      # Email address to send reports to
 AUTO_SEND_EMAIL = True               # Automatically send email with HTML report (True/False)
+                                     # Can be overridden by SEND_EMAIL environment variable
 
 # ===== Options Filtering Rules (used by Python code) =====
 DELTA_MIN = 0.07                     # Minimum Delta for CALL options (used in _filter_rows)
@@ -75,7 +76,6 @@ GEMINI_TIMEOUT_SECONDS = 180
 GEMINI_CSV_MAX_CHARS = 30000         # Max characters for CSV content in non-Gem mode
 
 # Derived paths - DO NOT EDIT
-DEFAULT_FOLDER = os.path.join(BASE_ASSETS_FOLDER, DEFAULT_ASSET)
 GEMINI_FILES_CACHE = os.path.join(AGENT_DOCS_FOLDER, '.gemini_files_cache.json')
 
 
@@ -269,7 +269,7 @@ def _filter_rows(rows, current_price=None):
     return filtered_rows
 
 
-def build_filtered_csv_text(folder=DEFAULT_FOLDER):
+def build_filtered_csv_text(folder):
     files = _list_csv_files(folder)
     if not files:
         raise FileNotFoundError(f'No CSV files found in folder: {folder}')
@@ -297,7 +297,7 @@ def build_filtered_csv_text(folder=DEFAULT_FOLDER):
     return output.getvalue()
 
 
-def process_csv_folder(folder=DEFAULT_FOLDER):
+def process_csv_folder(folder):
     files = _list_csv_files(folder)
     if not files:
         raise FileNotFoundError(f'No CSV files found in folder: {folder}')
@@ -543,7 +543,7 @@ def _extract_text_from_result(result):
     return None
 
 
-def _save_result_as_html(result, folder=DEFAULT_FOLDER):
+def _save_result_as_html(result, folder):
     """Save Gemini result as HTML file in the specified folder."""
     from datetime import datetime
 
@@ -794,6 +794,11 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
         print('   Generate one at: https://myaccount.google.com/apppasswords')
         return False
 
+    print(f'[i] Email config:')
+    print(f'    From: {from_email}')
+    print(f'    To: {to_email}')
+    print(f'    Server: {smtp_server}:{smtp_port}')
+
     if not os.path.exists(html_file_path):
         print(f'[X] HTML file not found: {html_file_path}')
         return False
@@ -806,11 +811,21 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
         # Get the folder containing the HTML file
         asset_folder = os.path.dirname(html_file_path)
 
+        # Extract timestamp from filename (YYYYMMDD_HHMMSS format)
+        from datetime import datetime
+        try:
+            timestamp_str = filename.split('_')[-2] + '_' + filename.split('_')[-1].replace('.html', '')
+            timestamp_obj = datetime.strptime(timestamp_str, '%Y%m%d_%H%M%S')
+            date_str = timestamp_obj.strftime('%d/%m/%Y %H:%M')
+        except (ValueError, IndexError):
+            date_str = ''
+
         # Create message
         msg = MIMEMultipart()
         msg['From'] = from_email
         msg['To'] = to_email
-        msg['Subject'] = f'DACS-3.0 Analysis Report - {asset_name}'
+        subject_date = f' - {date_str}' if date_str else ''
+        msg['Subject'] = f'📊 DACS-3.0 Report: {asset_name}{subject_date}'
 
         # Collect all files to attach
         files_to_attach = []
@@ -822,18 +837,32 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
 
         # Email body
         body = f"""
-DACS-3.0 Options Strategy Analysis Report
+📊 DACS-3.0 Options Strategy Analysis Report
+{'='*60}
 
-Asset: {asset_name}
-Report: {filename}
+Asset Symbol: {asset_name}
+Report Date: {date_str if date_str else 'N/A'}
+Report File: {filename}
 
-Attached files ({len(files_to_attach)}):
+{'='*60}
+Attached Files ({len(files_to_attach)}):
 """
         for f in files_to_attach:
-            body += f"  - {os.path.basename(f)}\n"
+            file_name = os.path.basename(f)
+            if file_name.endswith('.html'):
+                body += f"  📄 {file_name} (Main Report)\n"
+            elif file_name.endswith('.csv'):
+                body += f"  📊 {file_name}\n"
+            else:
+                body += f"  📎 {file_name}\n"
 
-        body += """
+        body += f"""
+{'='*60}
+
 This is an automated report generated by the DACS-3.0 analysis system.
+Generated with Gemini AI • Powered by Barchart Data
+
+For support: eb.bitan@gmail.com
 """
         msg.attach(MIMEText(body, 'plain'))
 
@@ -890,7 +919,8 @@ This is an automated report generated by the DACS-3.0 analysis system.
         return False
 
 
-def send_merged_file_to_gemini(file_path=None, folder=DEFAULT_FOLDER, api_key=None, prompt=None, model=None, allow_retry=True):
+def send_merged_file_to_gemini(file_path=None, folder=None, api_key=None, prompt=None, model=None, allow_retry=True):
+    """DEPRECATED: Use process_all_assets() for dynamic multi-asset processing."""
     if file_path is None:
         file_path = os.path.join(folder, 'merged_filtered_options.csv')
 
@@ -960,12 +990,14 @@ def send_merged_file_to_gemini(file_path=None, folder=DEFAULT_FOLDER, api_key=No
         raise RuntimeError(f'Gemini request failed: {exc.reason}') from exc
 
 
-def send_merged_folder_to_gemini(folder=DEFAULT_FOLDER, api_key=None, prompt=None, model=None, allow_retry=True):
+def send_merged_folder_to_gemini(folder=None, api_key=None, prompt=None, model=None, allow_retry=True):
+    """DEPRECATED: Use process_all_assets() for dynamic multi-asset processing."""
     output_path = process_csv_folder(folder=folder)
     return send_merged_file_to_gemini(file_path=output_path, folder=folder, api_key=api_key, prompt=prompt, model=model, allow_retry=allow_retry)
 
 
-def send_partial_csv_to_gemini(file_path=None, folder=DEFAULT_FOLDER, api_key=None, prompt=None, model=None, max_chars=8000):
+def send_partial_csv_to_gemini(file_path=None, folder=None, api_key=None, prompt=None, model=None, max_chars=8000):
+    """DEPRECATED: Use process_all_assets() for dynamic multi-asset processing."""
     if file_path is None:
         file_path = os.path.join(folder, 'merged_filtered_options.csv')
 
@@ -1014,7 +1046,7 @@ def send_partial_csv_to_gemini(file_path=None, folder=DEFAULT_FOLDER, api_key=No
         raise RuntimeError(f'Gemini request failed: {exc.reason}') from exc
 
 
-def send_to_gem(file_path=None, folder=DEFAULT_FOLDER, api_key=None, prompt=None, model=None, force_reupload_docs=False):
+def send_to_gem(file_path=None, folder=None, api_key=None, prompt=None, model=None, force_reupload_docs=False):
     """
     Send merged CSV file to Gemini with full DACS Gem configuration.
     This sends the CSV as an uploaded file and includes all agent-docs as inline text.
@@ -1234,12 +1266,11 @@ def scrape_and_process_all(scrape_first=True, merge_only=False):
         for item in os.listdir(BASE_ASSETS_FOLDER):
             item_path = os.path.join(BASE_ASSETS_FOLDER, item)
 
-            # Skip the 'bac' folder (backup reference)
-            if item.lower() == 'bac':
-                print(f'[i] Skipping backup folder: {item}')
+            # Skip .gitkeep and other hidden files
+            if item.startswith('.'):
                 continue
 
-            # Delete everything else
+            # Delete all folders and files (they will be recreated by screener)
             if os.path.isdir(item_path):
                 try:
                     shutil.rmtree(item_path)
@@ -1340,15 +1371,28 @@ def process_all_assets(merge_only=False):
             if html_path:
                 print(f'\n[OK] HTML report created: {html_path}')
 
-                # Step 4: Send email (if AUTO_SEND_EMAIL is enabled)
+                # Step 4: Send email (if AUTO_SEND_EMAIL is enabled or SEND_EMAIL=1 in .env)
                 email_sent = False
-                if AUTO_SEND_EMAIL:
+                send_email_enabled = os.environ.get('SEND_EMAIL', '1') != '0' and AUTO_SEND_EMAIL
+
+                if send_email_enabled:
                     print(f'\n=== Sending Email for {asset_name} ===')
-                    email_sent = send_email_with_html_report(html_path)
+
+                    # Retry up to 3 times
+                    max_retries = 3
+                    for attempt in range(1, max_retries + 1):
+                        print(f'  Attempt {attempt}/{max_retries}...')
+                        email_sent = send_email_with_html_report(html_path)
+                        if email_sent:
+                            break
+                        elif attempt < max_retries:
+                            print(f'  [!] Failed, retrying in 5 seconds...')
+                            time.sleep(5)
+
                     if not email_sent:
-                        print('[!] Email not sent - check your .env file for GMAIL_USER and GMAIL_PASSWORD')
+                        print('[!] Email not sent after 3 attempts - check your .env file for GMAIL_USER and GMAIL_PASSWORD')
                 else:
-                    print('[i] Email sending disabled (AUTO_SEND_EMAIL=False)')
+                    print('[i] Email sending disabled (SEND_EMAIL=0 in .env or AUTO_SEND_EMAIL=False)')
 
                 results.append({
                     'asset': asset_name,
