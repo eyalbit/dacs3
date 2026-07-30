@@ -53,6 +53,7 @@ jobs:
           GEMINI_MODEL=gemini-flash-lite-latest
           GMAIL_USER=${{ secrets.GMAIL_USER }}
           GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}
+          SEND_EMAIL=${{ secrets.SEND_EMAIL }}
           EOF
 
       - name: Create .env file (scraper-ts)
@@ -133,6 +134,25 @@ jobs:
             exit 0  # Don't fail the workflow
           else
             echo "✓ No errors detected"
+          fi
+
+      - name: Check email status
+        if: always()
+        run: |
+          echo "## Email Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Count email success/failure messages in logs
+          EMAIL_SENT=$(grep -c '\[OK\] Email sent successfully' analysis.log || echo "0")
+          EMAIL_FAILED=$(grep -c '\[!\] Email not sent' analysis.log || echo "0")
+
+          echo "- Emails sent: $EMAIL_SENT" >> $GITHUB_STEP_SUMMARY
+          echo "- Emails failed: $EMAIL_FAILED" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$EMAIL_SENT" -gt "0" ]; then
+            echo "✅ Emails were sent successfully"
+          else
+            echo "⚠️ No emails were sent - check GMAIL credentials in secrets"
           fi
 
       - name: Notify on failure

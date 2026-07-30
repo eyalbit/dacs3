@@ -21,6 +21,11 @@ assets/
 *.log
 full_run.log
 
+# Temporary example/test files
+gemini_response.txt
+*_response.txt
+*_output.txt
+
 # Session cache
 scraper-ts/.auth/
 

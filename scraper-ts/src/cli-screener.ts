@@ -76,12 +76,12 @@ Examples:
 
 Output Structure:
   Each symbol gets its own directory:
-    assets/BRK.B/
+    assets/SPY/
       ├── screener.csv                    (Barchart screener data)
-      └── BRK.B_quotedata_2026-07-30.csv  (CBOE option chain)
-    assets/EA/
+      └── SPY_quotedata_2026-07-30.csv  (CBOE option chain)
+    assets/AAPL/
       ├── screener.csv
-      └── EA_quotedata_2026-07-30.csv
+      └── AAPL_quotedata_2026-07-30.csv
 
 Environment Variables (set in .env):
   BARCHART_EMAIL        Your Barchart email

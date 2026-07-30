@@ -9,10 +9,10 @@
 ### לפני ההרצה:
 ```
 assets/
-├── BRK.B/
+├── SPY/
 │   ├── *.csv
 │   └── *.html
-├── EA/
+├── AAPL/
 └── V/
 ```
 
@@ -33,7 +33,7 @@ assets/
 - כל קובץ אחר ב-assets/
 
 ❌ **לא נמחק:**
-- תיקיית `assets/bac/` (שמורה כ-backup reference)
+- תיקיית `assets/spy/` (שמורה כ-backup reference)
 
 ---
 
@@ -52,8 +52,8 @@ if os.path.isdir(BASE_ASSETS_FOLDER):
     for item in os.listdir(BASE_ASSETS_FOLDER):
         item_path = os.path.join(BASE_ASSETS_FOLDER, item)
 
-        # Skip the 'bac' folder (backup reference)
-        if item.lower() == 'bac':
+        # Skip the 'spy' folder (backup reference)
+        if item.lower() == 'spy':
             print(f'[i] Skipping backup folder: {item}')
             continue
 
@@ -77,11 +77,11 @@ $ python csv_united.py
 ================================================================================
 STEP 0: CLEANING ASSETS FOLDER
 ================================================================================
-[i] Skipping backup folder: bac
-[✓] Deleted folder: BRK.B
-[✓] Deleted folder: EA
+[i] Skipping backup folder: spy
+[✓] Deleted folder: SPY
+[✓] Deleted folder: AAPL
 [✓] Deleted folder: V
-[✓] Deleted folder: XLV
+[✓] Deleted folder: MSFT
 [✓] Cleaned 4 items from assets/
 
 ================================================================================
@@ -141,7 +141,7 @@ npm run screener
 ## סיכום
 
 ✅ כל הרצה של `python csv_united.py` מנקה את `assets/` אוטומטית  
-✅ תיקיית `bac/` נשמרת (backup)  
+✅ תיקיית `spy/` נשמרת (backup)  
 ✅ ההרצה מתחילה נקייה עם נתונים טריים  
 ✅ אין צורך למחוק ידנית יותר!
 

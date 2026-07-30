@@ -177,7 +177,7 @@ export class BarchartScreenerPage extends BasePage {
         const symbols: string[] = [];
 
         for (const link of symbolLinks) {
-          // Extract symbol from href: /stocks/quotes/BRK.B/overview → BRK.B
+          // Extract symbol from href: /stocks/quotes/SPY/overview → SPY
           const href = await link.getAttribute('href');
           if (href) {
             const match = href.match(/\/quotes\/([^\/]+)/);

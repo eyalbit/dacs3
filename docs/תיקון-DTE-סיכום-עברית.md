@@ -113,9 +113,9 @@ CRITICAL DTE VALIDATION (MUST FOLLOW):
 ```bash
 $ python csv_united.py --merge-only
 
-=== Step 1: Merging CSV files for XLV ===
+=== Step 1: Merging CSV files for MSFT ===
   [FILTERED] Skipping Fri Jul 31 2026 (DTE=1 days, minimum required: 3 days)
-[OK] Merged CSV created: assets\XLV\merged_filtered_options.csv
+[OK] Merged CSV created: assets\MSFT\merged_filtered_options.csv
 ```
 
 ### השוואת קבצי CSV

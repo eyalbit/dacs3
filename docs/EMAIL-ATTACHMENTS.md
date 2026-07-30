@@ -31,7 +31,7 @@ Attachments (4):
 
 ## מה מצורף עכשיו?
 
-### לדוגמה - תיקיית BRK.B:
+### לדוגמה - תיקיית SPY:
 
 1. **HTML Report** (4.4 KB)
    - `BRK.B_DACS-3.0_20260730_144129.html`
@@ -52,11 +52,11 @@ Attachments (4):
 ## גוף המייל החדש:
 
 ```
-Subject: DACS-3.0 Analysis Report - BRK.B
+Subject: DACS-3.0 Analysis Report - SPY
 
 DACS-3.0 Options Strategy Analysis Report
 
-Asset: BRK.B
+Asset: SPY
 Report: BRK.B_DACS-3.0_20260730_144129.html
 
 Attached files (4):
@@ -179,7 +179,7 @@ python3.14 csv_united.py
 
 ## גודל המייל
 
-### דוגמה - BRK.B:
+### דוגמה - SPY:
 - HTML: 4.4 KB
 - CSV Raw (Jul): 12.8 KB
 - CSV Raw (Aug): 48.7 KB
@@ -197,7 +197,7 @@ python3.14 csv_united.py
 ```python
 from csv_united import send_email_with_html_report
 
-html_file = "assets/BRK.B/BRK.B_DACS-3.0_20260730_144129.html"
+html_file = "assets/SPY/BRK.B_DACS-3.0_20260730_144129.html"
 success = send_email_with_html_report(html_file)
 
 if success:

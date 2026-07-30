@@ -86,9 +86,9 @@ scraper-ts/
                          ▼
                 ┌────────────────┐
                 │   assets/      │
-                │   ├── bac/     │
-                │   ├── jpm/     │
-                │   ├── iwm/     │
+                │   ├── spy/     │
+                │   ├── spy/     │
+                │   ├── spy/     │
                 │   └── spy/     │
                 │   (CSV files)  │
                 └────────┬───────┘
@@ -195,7 +195,7 @@ cp .env.example .env
 
 # 5. Test scraper
 cd scraper-ts
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 
 # 6. Run full pipeline
 npm run scrape -- --all
@@ -238,7 +238,7 @@ class OptionsChainPage extends BasePage {
 
 // Usage
 const page = new OptionsChainPage(browserPage, config);
-await page.loadSymbol('BAC');
+await page.loadSymbol('SPY');
 const dates = await page.getExpirationDates();
 ```
 
@@ -318,13 +318,13 @@ cd scraper-ts
 npm run build
 
 # Scrape single asset
-npm run scrape -- --asset BAC
+npm run scrape -- --asset SPY
 
 # Scrape all assets
 npm run scrape -- --all
 
 # Debug mode (visible browser)
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 
 # Lint & format
 npm run lint
@@ -418,13 +418,13 @@ Python Playwright exists but lacks the tooling and patterns that make TypeScript
 
 ```
 assets/
-├── bac/
+├── spy/
 │   ├── bac_quotedata_2026-07-29T18-30-00.csv    # Raw scraped data
 │   ├── merged_filtered_options.csv               # Processed data
 │   └── bac_DACS-3.0_20260729_183145.html        # Analysis report
-├── jpm/
+├── spy/
 │   └── ...
-├── iwm/
+├── spy/
 │   └── ...
 └── spy/
     └── ...
@@ -464,7 +464,7 @@ assets/
 2. 📖 **Read [SKILLS.md](scraper-ts/SKILLS.md)** - Learn Skills pattern
 3. 🔧 **Setup:** Follow [scraper-ts/INSTALLATION.md](scraper-ts/INSTALLATION.md)
 4. ⚙️ **Configure:** Edit `scraper-ts/src/config/index.ts`
-5. 🧪 **Test:** `npm run scrape -- --asset BAC --headless=false`
+5. 🧪 **Test:** `npm run scrape -- --asset SPY --headless=false`
 6. 🚀 **Run:** `npm run scrape -- --all`
 7. 📊 **Analyze:** `python csv_united.py --no-scrape`
 8. 🎨 **Customize:** Create custom Page Objects and Skills

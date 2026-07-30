@@ -17,7 +17,7 @@ async function inspectPage() {
   const page = await context.newPage();
 
   try {
-    const url = 'https://www.cboe.com/delayed_quotes/BRK.B/quote_table';
+    const url = 'https://www.cboe.com/delayed_quotes/SPY/quote_table';
     console.log(`\nNavigating to: ${url}\n`);
 
     await page.goto(url);

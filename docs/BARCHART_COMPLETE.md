@@ -118,7 +118,7 @@ npm run format                       # Format code
    ↓
 6. Download CSV (optional)
    ↓
-7. Return: ["BAC", "JPM", "XLV", ...]
+7. Return: ["SPY", "SPY", "MSFT", ...]
 ```
 
 ---
@@ -352,7 +352,7 @@ BarchartScreenerSkill
     ├─→ Extract symbols
     └─→ Download CSV (optional)
     ↓
-Return: ["BAC", "JPM", "XLV", ...]
+Return: ["SPY", "SPY", "MSFT", ...]
 ```
 
 ---

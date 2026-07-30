@@ -23,7 +23,7 @@
 
 ### 2. ✅ שילוב Barchart Screener
 
-**בעיה:** המערכת עבדה עם רשימה קבועה של מניות (BAC, IWM, JPM, SPY) במקום להשתמש ב-Screener.
+**בעיה:** המערכת עבדה עם רשימה קבועה של מניות (SPY, SPY, SPY, SPY) במקום להשתמש ב-Screener.
 
 **פתרון:**
 - ✅ שינוי `csv_united.py` להשתמש ב-`npm run screener`
@@ -239,7 +239,7 @@ npm run screener
 אם בכל זאת צריך:
 ```typescript
 // scraper-ts/src/config/index.ts
-export const SUPPORTED_ASSETS = ['BAC', 'IWM', 'JPM', 'SPY', 'AAPL'];
+export const SUPPORTED_ASSETS = ['SPY', 'SPY', 'SPY', 'SPY', 'AAPL'];
 ```
 
 ---

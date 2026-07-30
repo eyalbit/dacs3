@@ -166,7 +166,7 @@ Found 15 symbols
 
 📊 Results:
    Symbols found: 15
-   Symbols: BAC, JPM, XLV, MSFT, GOOGL, ...
+   Symbols: SPY, SPY, MSFT, MSFT, GOOGL, ...
    CSV saved to: ./downloads/screener-results.csv
 ```
 
@@ -185,7 +185,7 @@ Found 15 symbols
    ↓
 5. המתנה לטבלה
    ↓
-6. חילוץ סימבולים: ["BAC", "JPM", "XLV", ...]
+6. חילוץ סימבולים: ["SPY", "SPY", "MSFT", ...]
    ↓
 7. הורדת CSV (אופציונלי)
    ↓

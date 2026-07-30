@@ -53,7 +53,7 @@ agent-docs/אנגלית-כללי מסחר DACS-3.0:
 ---
 
 ### 2. ✅ שילוב Barchart Screener
-**בעיה:** רשימה קבועה (BAC, IWM, JPM, SPY)  
+**בעיה:** רשימה קבועה (SPY, SPY, SPY, SPY)  
 **פתרון:** שימוש ב-Screener דינמי
 
 ```python
@@ -69,7 +69,7 @@ agent-docs/אנגלית-כללי מסחר DACS-3.0:
 ✅ Screener completed successfully!
 📊 Results:
    Symbols found: 4
-   Symbols: BRK.B, EA, V, XLV
+   Symbols: SPY, AAPL, V, MSFT
 ```
 
 ---
@@ -82,7 +82,7 @@ agent-docs/אנגלית-כללי מסחר DACS-3.0:
 # STEP 0: Clean assets folder before starting
 if os.path.isdir(BASE_ASSETS_FOLDER):
     for item in os.listdir(BASE_ASSETS_FOLDER):
-        if item.lower() != 'bac':  # Keep backup
+        if item.lower() != 'spy':  # Keep backup
             shutil.rmtree(item_path)
 ```
 
@@ -91,8 +91,8 @@ if os.path.isdir(BASE_ASSETS_FOLDER):
 ================================================================================
 STEP 0: CLEANING ASSETS FOLDER
 ================================================================================
-[OK] Deleted folder: BRK.B
-[OK] Deleted folder: EA
+[OK] Deleted folder: SPY
+[OK] Deleted folder: AAPL
 [OK] Cleaned 4 items from assets/
 ```
 
@@ -226,7 +226,7 @@ cd scraper-ts && npm run screener
 **תוצאה:**
 ```
 Symbols found: 4
-Symbols: BRK.B, EA, V, XLV ✅
+Symbols: SPY, AAPL, V, MSFT ✅
 ```
 
 ### ✅ בדיקה 3: הרצה מלאה
@@ -235,10 +235,10 @@ python csv_united.py --no-scrape
 ```
 **תוצאה:**
 ```
-[OK] BRK.B: completed
-[OK] EA: completed
+[OK] SPY: completed
+[OK] AAPL: completed
 [OK] V: completed
-[OK] XLV: completed ✅
+[OK] MSFT: completed ✅
 ```
 
 ### ✅ בדיקה 4: אין תאריכים פגומים
@@ -276,7 +276,7 @@ Attaching 4 files ✅
 ### ריצות:
 - **Screener:** 3 ריצות מוצלחות
 - **Analysis:** 2 ריצות מלאות
-- **מניות שנותחו:** 4 (BRK.B, EA, V, XLV)
+- **מניות שנותחו:** 4 (SPY, AAPL, V, MSFT)
 - **דוחות HTML:** 8 (2 runs × 4 stocks)
 
 ### זמנים:
@@ -331,7 +331,7 @@ npm not found
                   ▼
 ┌─────────────────────────────────────────┐
 │           STEP 0: Cleanup               │
-│     Delete old assets/ (keep bac/)      │
+│     Delete old assets/ (keep spy/)      │
 └─────────────────┬───────────────────────┘
                   │
                   ▼
@@ -339,7 +339,7 @@ npm not found
 │      STEP 1: Barchart Screener          │
 │  ┌──────────────────────────────────┐   │
 │  │  Login → Run Screener → Extract  │   │
-│  │  Symbols: BRK.B, EA, V, XLV      │   │
+│  │  Symbols: SPY, AAPL, V, MSFT      │   │
 │  └──────────────────────────────────┘   │
 │  ┌──────────────────────────────────┐   │
 │  │  CBOE: Download Options Chains   │   │

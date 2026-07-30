@@ -18,7 +18,7 @@ async function testCboe() {
   const page = await context.newPage();
 
   try {
-    const symbol = 'BRK.B';
+    const symbol = 'SPY';
     console.log(`\n📊 Testing option chain extraction for ${symbol}...\n`);
 
     const cboe = new CboeOptionChainPage(page, {

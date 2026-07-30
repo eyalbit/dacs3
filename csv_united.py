@@ -47,8 +47,9 @@ AGENT_DOCS_FOLDER = 'agent-docs'     # Folder containing instruction documents
 
 # ===== Email Configuration =====
 EMAIL_TO = 'eb.bitan@gmail.com'      # Email address to send reports to
-AUTO_SEND_EMAIL = True               # Automatically send email with HTML report (True/False)
-                                     # Can be overridden by SEND_EMAIL environment variable
+# Note: Email sending is controlled ONLY by SEND_EMAIL environment variable
+# Set SEND_EMAIL=1 in GitHub Secrets to enable email sending in CI/CD
+# Local runs will NOT send emails unless SEND_EMAIL=1 is set in .env
 
 # ===== Options Filtering Rules (used by Python code) =====
 DELTA_MIN = 0.07                     # Minimum Delta for CALL options (used in _filter_rows)
@@ -1116,22 +1117,22 @@ Base URL format:
 
 Leg parameters format: -.ShortLegParams,.LongLegParams
 - Each leg: <TICKER><YYMMDD><C/P><STRIKE>
-- TICKER: uppercase symbol (e.g., IWM, SPY, BAC)
+- TICKER: uppercase symbol from the CSV file
 - YYMMDD: 6-digit date from expiration (e.g., Jul 31 2026 = 260731)
 - C/P: C for Call, P for Put
-- STRIKE: strike price from the "Strike" column in the CSV (e.g., 65 for BAC, 299 for IWM)
+- STRIKE: strike price from the "Strike" column in the CSV
   IMPORTANT: Use the "Strike" column value, NOT the option symbol!
-  Example: For BAC260731C00065000, the Strike column shows 65.00, so use 65 in the URL
+  Example: For AAPL260731C00165000, if the Strike column shows 165.00, use 165 in the URL
 
 Syntax rules (MUST follow exactly):
 - Short leg: ALWAYS prefix with "-." (minus-dot)
 - Long leg: ALWAYS prefix with "." (dot only)
 - Separator: comma with NO space between legs
 
-Example for IWM Call diagonal spread:
-- Short: IWM Jul 31 2026 Strike 299 Call
-- Long: IWM Aug 7 2026 Strike 300 Call
-- Correct URL: https://optionstrat.com/build/diagonal-call-spread/IWM/-.IWM260731C299,.IWM260807C300
+Example format for Call diagonal spread (using TICKER from your CSV):
+- Short: {TICKER} Jul 31 2026 Strike {X} Call
+- Long: {TICKER} Aug 7 2026 Strike {Y} Call
+- Correct URL: https://optionstrat.com/build/diagonal-call-spread/{TICKER}/-.{TICKER}260731C{X},.{TICKER}260807C{Y}
 
 Output Format Requirements (CRITICAL - Follow EXACTLY):
 --------------------------------------------------------
@@ -1371,9 +1372,9 @@ def process_all_assets(merge_only=False):
             if html_path:
                 print(f'\n[OK] HTML report created: {html_path}')
 
-                # Step 4: Send email (if AUTO_SEND_EMAIL is enabled or SEND_EMAIL=1 in .env)
+                # Step 4: Send email (ONLY if SEND_EMAIL=1 in environment)
                 email_sent = False
-                send_email_enabled = os.environ.get('SEND_EMAIL', '1') != '0' and AUTO_SEND_EMAIL
+                send_email_enabled = os.environ.get('SEND_EMAIL', '0') == '1'
 
                 if send_email_enabled:
                     print(f'\n=== Sending Email for {asset_name} ===')
@@ -1392,7 +1393,7 @@ def process_all_assets(merge_only=False):
                     if not email_sent:
                         print('[!] Email not sent after 3 attempts - check your .env file for GMAIL_USER and GMAIL_PASSWORD')
                 else:
-                    print('[i] Email sending disabled (SEND_EMAIL=0 in .env or AUTO_SEND_EMAIL=False)')
+                    print('[i] Email sending disabled (SEND_EMAIL not set to 1 in environment)')
 
                 results.append({
                     'asset': asset_name,

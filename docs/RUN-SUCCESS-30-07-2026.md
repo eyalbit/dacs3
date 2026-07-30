@@ -10,7 +10,7 @@
 ### 📊 Screener Results:
 ```
 Symbols found: 4
-Symbols: BRK.B, EA, V, XLV
+Symbols: SPY, AAPL, V, MSFT
 ```
 
 ### 🔍 DTE Filtering:
@@ -39,13 +39,13 @@ $ grep -qi "jul 31" assets/*/*.html
 
 ```
 assets/
-├── BRK.B/
+├── SPY/
 │   ├── BRK.B_quotedata_Jul_2026_2026-07-30T11-30-14.csv
 │   ├── BRK.B_quotedata_Aug_2026_2026-07-30T11-30-20.csv
 │   ├── merged_filtered_options.csv (2.1K)
 │   └── BRK.B_DACS-3.0_20260730_144129.html ✅
 │
-├── EA/
+├── AAPL/
 │   ├── EA_quotedata_Jul_2026_2026-07-30T11-30-39.csv
 │   ├── EA_quotedata_Aug_2026_2026-07-30T11-30-45.csv
 │   ├── merged_filtered_options.csv (871 bytes)
@@ -57,7 +57,7 @@ assets/
 │   ├── merged_filtered_options.csv (2.0K)
 │   └── V_DACS-3.0_20260730_144136.html ✅
 │
-└── XLV/
+└── MSFT/
     ├── XLV_quotedata_Jul_2026_2026-07-30T11-31-27.csv
     ├── XLV_quotedata_Aug_2026_2026-07-30T11-31-32.csv
     ├── merged_filtered_options.csv (2.3K)
@@ -77,15 +77,15 @@ npm run screener
 **תוצאות:**
 - נכנס לחשבון Barchart
 - הריץ Screener מספר 478448
-- מצא 4 מניות: BRK.B, EA, V, XLV
+- מצא 4 מניות: SPY, AAPL, V, MSFT
 
 ### 2. הורדת Options Chains ✅
 ```
 CBOE Options Data Downloaded:
-- BRK.B: Jul + Aug 2026
-- EA: Jul + Aug 2026
+- SPY: Jul + Aug 2026
+- AAPL: Jul + Aug 2026
 - V: Jul + Aug 2026
-- XLV: Jul + Aug 2026
+- MSFT: Jul + Aug 2026
 ```
 
 **סה"כ:** 8 קבצי CSV הורדו
@@ -128,8 +128,8 @@ All dated: 2026-07-30 14:41
 
 ### ✅ אימות 4: Screener Integration
 ```
-Symbols: BRK.B, EA, V, XLV
-(NOT: BAC, IWM, JPM, SPY)
+Symbols: SPY, AAPL, V, MSFT
+(NOT: SPY, SPY, SPY, SPY)
 ```
 **Status:** PASS - מושך מה-Screener
 
@@ -144,18 +144,18 @@ Symbols: BRK.B, EA, V, XLV
 
 📊 Results:
    Symbols found: 4
-   Symbols: BRK.B, EA, V, XLV
+   Symbols: SPY, AAPL, V, MSFT
 ```
 
-### STEP 2: Processing - BRK.B
+### STEP 2: Processing - SPY
 ```
-=== Step 1: Merging CSV files for BRK.B ===
+=== Step 1: Merging CSV files for SPY ===
   [FILTERED] Skipping Fri Jul 31 2026 (DTE=1 days, minimum required: 3 days)
-[OK] Merged CSV created: assets\BRK.B\merged_filtered_options.csv
+[OK] Merged CSV created: assets\SPY\merged_filtered_options.csv
 
-=== Step 2: Running DACS Analysis with Gemini for BRK.B ===
+=== Step 2: Running DACS Analysis with Gemini for SPY ===
 [OK] Response received from Gemini
-[OK] HTML report saved: assets\BRK.B\BRK.B_DACS-3.0_20260730_144129.html
+[OK] HTML report saved: assets\SPY\BRK.B_DACS-3.0_20260730_144129.html
 ```
 
 ### STEP 2: Processing - Summary
@@ -163,10 +163,10 @@ Symbols: BRK.B, EA, V, XLV
 ================================================================================
 PROCESSING SUMMARY
 ================================================================================
-[OK] BRK.B: completed
-[OK] EA: completed
+[OK] SPY: completed
+[OK] AAPL: completed
 [OK] V: completed
-[OK] XLV: completed
+[OK] MSFT: completed
 
 [i] All assets processed successfully
 ```
@@ -238,10 +238,10 @@ npm not found. Install Node.js
 - **סה"כ:** 16 קבצים
 
 ### נפח נתונים:
-- BRK.B: 2.1KB (merged)
-- EA: 871 bytes (merged)
+- SPY: 2.1KB (merged)
+- AAPL: 871 bytes (merged)
 - V: 2.0KB (merged)
-- XLV: 2.3KB (merged)
+- MSFT: 2.3KB (merged)
 - **סה"כ:** ~7.3KB מסונן
 
 ---
@@ -279,6 +279,6 @@ python3.14 csv_united.py --no-scrape
 **ההרצה הושלמה בהצלחה!** 🚀
 
 **תאריך:** 30 יולי 2026, 14:41  
-**מניות:** BRK.B, EA, V, XLV  
+**מניות:** SPY, AAPL, V, MSFT  
 **דוחות:** 4 HTML files  
 **אימותים:** כל הבדיקות עברו ✅

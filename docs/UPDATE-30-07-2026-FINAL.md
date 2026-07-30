@@ -9,12 +9,12 @@
 
 ### 2. ✅ שילוב Barchart Screener (בוצע קודם)
 - המערכת מושכת מניות מ-Screener במקום רשימה קבועה
-- אין עוד BAC, IWM, JPM, SPY hardcoded
+- אין עוד SPY, SPY, SPY, SPY hardcoded
 
 ### 3. ✅ ניקוי אוטומטי של Assets (חדש!)
 - **STEP 0** מתווסף בתחילת כל הרצה
 - מנקה את כל תוכן `assets/` לפני scraping
-- שומר רק את תיקיית `bac/` (backup reference)
+- שומר רק את תיקיית `spy/` (backup reference)
 
 ---
 
@@ -35,8 +35,8 @@ if os.path.isdir(BASE_ASSETS_FOLDER):
     for item in os.listdir(BASE_ASSETS_FOLDER):
         item_path = os.path.join(BASE_ASSETS_FOLDER, item)
 
-        # Skip the 'bac' folder (backup reference)
-        if item.lower() == 'bac':
+        # Skip the 'spy' folder (backup reference)
+        if item.lower() == 'spy':
             print(f'[i] Skipping backup folder: {item}')
             continue
 
@@ -60,11 +60,11 @@ if os.path.isdir(BASE_ASSETS_FOLDER):
 ================================================================================
 STEP 0: CLEANING ASSETS FOLDER
 ================================================================================
-[i] Skipping backup folder: bac
-[✓] Deleted folder: BRK.B
-[✓] Deleted folder: EA
+[i] Skipping backup folder: spy
+[✓] Deleted folder: SPY
+[✓] Deleted folder: AAPL
 [✓] Deleted folder: V
-[✓] Deleted folder: XLV
+[✓] Deleted folder: MSFT
 [✓] Cleaned 4 items from assets/
 
 ================================================================================
@@ -87,13 +87,13 @@ STEP 1: SCRAPING FRESH DATA
 4. **✅ פשטות** - אין צורך למחוק ידנית
 
 ### מה נמחק בכל הרצה:
-- ✅ תיקיות מניות ישנות (BRK.B, EA, V, וכו')
+- ✅ תיקיות מניות ישנות (SPY, AAPL, V, וכו')
 - ✅ קבצי CSV ישנים
 - ✅ דוחות HTML ישנים
 - ✅ כל קובץ אחר ב-assets/
 
 ### מה לא נמחק:
-- ❌ תיקיית `bac/` (backup reference)
+- ❌ תיקיית `spy/` (backup reference)
 - ❌ התיקייה `assets/` עצמה (רק תוכנה)
 
 ---
@@ -118,35 +118,35 @@ STEP 1: SCRAPING FRESH DATA
 
 📊 Results:
    Symbols found: 4
-   Symbols: BRK.B, EA, V, XLV
+   Symbols: SPY, AAPL, V, MSFT
 
 📊 Extracting Option Chains from CBOE...
-✓ BRK.B: 2 files downloaded
-✓ EA: 2 files downloaded
+✓ SPY: 2 files downloaded
+✓ AAPL: 2 files downloaded
 ✓ V: 2 files downloaded
-✓ XLV: 2 files downloaded
+✓ MSFT: 2 files downloaded
 
 ================================================================================
 STEP 2: PROCESSING ASSETS
 ================================================================================
 
 [i] Found 4 asset folders to process:
-    - BRK.B
-    - EA
+    - SPY
+    - AAPL
     - V
-    - XLV
+    - MSFT
 
 ================================================================================
-Processing asset 1/4: BRK.B
+Processing asset 1/4: SPY
 ================================================================================
 
-=== Step 1: Merging CSV files for BRK.B ===
+=== Step 1: Merging CSV files for SPY ===
   [FILTERED] Skipping Fri Jul 31 2026 (DTE=1 days, minimum required: 3 days)
-[OK] Merged CSV created: assets\BRK.B\merged_filtered_options.csv
+[OK] Merged CSV created: assets\SPY\merged_filtered_options.csv
 
-=== Step 2: Running DACS Analysis with Gemini for BRK.B ===
+=== Step 2: Running DACS Analysis with Gemini for SPY ===
 [OK] Response received from Gemini
-[OK] HTML report saved: assets\BRK.B\BRK.B_DACS-3.0_20260730_125355.html
+[OK] HTML report saved: assets\SPY\BRK.B_DACS-3.0_20260730_125355.html
 
 [OK] HTML report created
 ...
@@ -195,8 +195,8 @@ dacs3/
 ├── *.py
 ├── *.md (18 קבצים בroot)
 └── assets/
-    ├── BRK.B/ (ישן)
-    ├── EA/ (ישן)
+    ├── SPY/ (ישן)
+    ├── AAPL/ (ישן)
     └── V/ (ישן)
 ```
 

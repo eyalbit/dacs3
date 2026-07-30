@@ -27,10 +27,10 @@ Short Leg: 07-31 (DTE=1 יום) ❌ לא תקין
 ### 2. ✅ שילוב Screener - עובד מצוין!
 
 **לפני:**
-- רשימה קבועה: BAC, IWM, JPM, SPY
+- רשימה קבועה: SPY, SPY, SPY, SPY
 
 **אחרי:**
-- מניות מה-Screener: **BRK.B, EA, V, XLV**
+- מניות מה-Screener: **SPY, AAPL, V, MSFT**
 
 **התוצאה:** המערכת מנתחת רק מניות מה-Screener שלך!
 
@@ -41,7 +41,7 @@ Short Leg: 07-31 (DTE=1 יום) ❌ לא תקין
 ### 📊 Screener Results:
 ```
 Symbols found: 4
-Symbols: BRK.B, EA, V, XLV
+Symbols: SPY, AAPL, V, MSFT
 ```
 
 ### 🔧 Filtering Results:
@@ -70,13 +70,13 @@ $ grep -i "jul 31" assets/*/DACS*.html
 
 ```
 assets/
-├── BRK.B/
+├── SPY/
 │   ├── BRK.B_quotedata_Jul_2026_2026-07-30T09-52-04.csv
 │   ├── BRK.B_quotedata_Aug_2026_2026-07-30T09-52-10.csv
 │   ├── merged_filtered_options.csv
 │   └── BRK.B_DACS-3.0_20260730_125355.html ← דוח ניתוח
 │
-├── EA/
+├── AAPL/
 │   ├── EA_quotedata_Jul_2026_2026-07-30T09-52-28.csv
 │   ├── EA_quotedata_Aug_2026_2026-07-30T09-52-34.csv
 │   ├── merged_filtered_options.csv
@@ -88,7 +88,7 @@ assets/
 │   ├── merged_filtered_options.csv
 │   └── V_DACS-3.0_20260730_125403.html
 │
-└── XLV/
+└── MSFT/
     ├── XLV_quotedata_Jul_2026_2026-07-30T09-53-15.csv
     ├── XLV_quotedata_Aug_2026_2026-07-30T09-53-21.csv
     ├── merged_filtered_options.csv
@@ -102,7 +102,7 @@ assets/
 ### ✅ בדיקה 1: Screener Integration
 ```
 Symbols found: 4
-Symbols: BRK.B, EA, V, XLV
+Symbols: SPY, AAPL, V, MSFT
 ```
 **סטטוס:** ✅ עובד - מושך מניות מ-Barchart
 
@@ -119,10 +119,10 @@ Symbols: BRK.B, EA, V, XLV
 ### ✅ בדיקה 3: CSV Files
 ```bash
 $ ls assets/*/merged_filtered_options.csv
-assets/BRK.B/merged_filtered_options.csv
-assets/EA/merged_filtered_options.csv
+assets/SPY/merged_filtered_options.csv
+assets/AAPL/merged_filtered_options.csv
 assets/V/merged_filtered_options.csv
-assets/XLV/merged_filtered_options.csv
+assets/MSFT/merged_filtered_options.csv
 ```
 **סטטוס:** ✅ נוצרו 4 קבצים מסוננים
 
@@ -205,7 +205,7 @@ python csv_united.py
 ### לבדוק דוח:
 פתח אחד מהקבצים:
 ```
-assets/BRK.B/BRK.B_DACS-3.0_20260730_125355.html
+assets/SPY/BRK.B_DACS-3.0_20260730_125355.html
 ```
 
 בדפדפן.

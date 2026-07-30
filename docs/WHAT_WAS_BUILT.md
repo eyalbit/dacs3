@@ -108,7 +108,7 @@ const result = await skill.execute();
 
 ```typescript
 const page = new OptionsChainPage(browserPage, config);
-await page.loadSymbol('BAC');
+await page.loadSymbol('SPY');
 const dates = await page.getExpirationDates();
 const data = await page.extractOptionsTable();
 ```
@@ -166,7 +166,7 @@ export const DATA_SOURCES = {
 ### Run Scraper
 ```bash
 # Test with visible browser
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 
 # Scrape all assets
 npm run scrape -- --all
@@ -234,7 +234,7 @@ cd .. && python csv_united.py --no-scrape
 
 1. ✅ Read [SKILLS.md](scraper-ts/SKILLS.md) - Understand Skills pattern
 2. 🔧 Configure `src/config/index.ts` for your data source
-3. 🧪 Test: `npm run scrape -- --asset BAC --headless=false`
+3. 🧪 Test: `npm run scrape -- --asset SPY --headless=false`
 4. 🚀 Run: `npm run scrape -- --all`
 5. 🎨 Create custom Skills for your needs
 

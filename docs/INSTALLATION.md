@@ -161,9 +161,9 @@ dacs3/
 │
 ├── .venv/                  # Python virtual environment
 ├── assets/                 # Data folder (CSV files)
-│   ├── bac/
-│   ├── jpm/
-│   ├── iwm/
+│   ├── spy/
+│   ├── spy/
+│   ├── spy/
 │   └── spy/
 │
 ├── agent-docs/             # DACS AI instructions
@@ -183,7 +183,7 @@ dacs3/
 
 ```bash
 cd scraper-ts
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 ```
 
 This opens a visible browser so you can see what's happening.
@@ -302,11 +302,11 @@ pip install -r requirements.txt
 cd scraper-ts
 
 # Run with visible browser
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 
 # Slow down actions (500ms)
 # Edit .env: SCRAPER_SLOW_MO=500
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 ```
 
 ### Watch TypeScript Changes
@@ -365,7 +365,7 @@ rm -rf dacs3
 
 1. ✅ Complete installation (both TypeScript & Python)
 2. 📝 Configure `scraper-ts/src/config/index.ts` for your data source
-3. 🧪 Test with: `npm run scrape -- --asset BAC --headless=false`
+3. 🧪 Test with: `npm run scrape -- --asset SPY --headless=false`
 4. 🔧 Fix selectors if needed
 5. 🚀 Run full pipeline: `npm run scrape -- --all && python csv_united.py --no-scrape`
 6. 📖 Read [scraper-ts/SKILLS.md](scraper-ts/SKILLS.md) to understand Skills pattern

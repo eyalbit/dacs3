@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.env$\")",
+      "Bash(python csv_united.py --no-scrape)",
+      "Bash(tee test_run.log)",
+      "Bash(/c/Python312/python.exe --version)",
+      "Bash(cmd.exe /c \"python --version\")",
+      "Bash(cmd.exe /c \"python csv_united.py 2>&1\")",
+      "Bash(powershell.exe -Command \"python csv_united.py 2>&1 | Tee-Object -FilePath full_run.log\")",
+      "Bash(powershell.exe -Command \"Get-Command python* | Select-Object -First 1 -ExpandProperty Source\")",
+      "Bash(\"D:\\\\Users\\\\eyal.bitan\\\\.local\\\\bin\\\\python3.14.exe\" csv_united.py)"
+    ]
+  }
+}

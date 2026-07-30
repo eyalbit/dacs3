@@ -101,7 +101,7 @@ npm run build
 
 ```bash
 # Scrape a single asset
-npm run scrape -- --asset BAC
+npm run scrape -- --asset SPY
 
 # Scrape all supported assets
 npm run scrape -- --all
@@ -110,7 +110,7 @@ npm run scrape -- --all
 npm run scrape -- --asset SPY --headless=false
 
 # Use a different data source configuration
-npm run scrape -- --asset BAC --source cboe
+npm run scrape -- --asset SPY --source cboe
 ```
 
 ### Programmatic Usage
@@ -124,11 +124,11 @@ async function main() {
   });
 
   // Single asset
-  const result = await scraper.scrapeAsset('BAC');
+  const result = await scraper.scrapeAsset('SPY');
   console.log(result);
 
   // Multiple assets
-  const results = await scraper.scrapeMultiple(['BAC', 'SPY', 'JPM']);
+  const results = await scraper.scrapeMultiple(['SPY', 'AAPL', 'MSFT']);
   console.log(results);
 }
 
@@ -153,7 +153,7 @@ async function customScrape() {
     
     // Use Page Object
     const optionsPage = new OptionsChainPage(page, config);
-    await optionsPage.loadSymbol('BAC');
+    await optionsPage.loadSymbol('SPY');
 
     // Use Skill
     const tableSkill = new TableExtractionSkill(page, {
@@ -429,7 +429,7 @@ timeout: 60000  // 60 seconds
 ### Debug with visible browser
 
 ```bash
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 ```
 
 ## Best Practices Followed

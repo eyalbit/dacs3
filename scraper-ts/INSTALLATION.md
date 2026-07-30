@@ -174,14 +174,14 @@ Config:   optionsTable: 'table.options-data'
 
 ```bash
 # Run with visible browser (to see what's happening)
-npm run scrape -- --asset BAC --headless=false
+npm run scrape -- --asset SPY --headless=false
 ```
 
 Watch the browser and verify:
 - ✅ Correct page loads
 - ✅ Table is found
 - ✅ Data is extracted
-- ✅ CSV file is created in `../assets/bac/`
+- ✅ CSV file is created in `../assets/spy/`
 
 ### Customize If Needed
 
@@ -197,7 +197,7 @@ If scraping fails:
 Once verified, run in headless mode:
 
 ```bash
-npm run scrape -- --asset BAC
+npm run scrape -- --asset SPY
 ```
 
 ### Scrape All Assets
@@ -418,7 +418,7 @@ rm -rf scraper-ts
 
 1. ✅ Complete installation
 2. 📝 Customize `src/config/index.ts` for your data source
-3. 🧪 Test with single asset: `npm run scrape -- --asset BAC --headless=false`
+3. 🧪 Test with single asset: `npm run scrape -- --asset SPY --headless=false`
 4. 🔧 Fix selectors if needed
 5. 🚀 Run full scrape: `npm run scrape -- --all`
 6. 📖 Read [SKILLS.md](SKILLS.md) to learn about reusable patterns

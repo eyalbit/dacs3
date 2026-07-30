@@ -84,13 +84,13 @@ scraper-ts/
 
 ```
 assets/
-├── BRK.B/
+├── SPY/
 │   ├── BRK.B_quotedata_Jul_2026_20260730_072453.csv
 │   ├── BRK.B_quotedata_Aug_2026_20260730_072458.csv
 │   ├── merged_filtered_options.csv
 │   └── BRK.B_DACS-3.0_20260730_123456.html    ⭐ פתח את זה!
 │
-├── EA/
+├── AAPL/
 │   ├── EA_quotedata_Jul_2026_*.csv
 │   ├── EA_quotedata_Aug_2026_*.csv
 │   ├── merged_filtered_options.csv
@@ -99,7 +99,7 @@ assets/
 ├── V/
 │   └── ... (same structure)
 │
-└── XLV/
+└── MSFT/
     └── ... (same structure)
 ```
 

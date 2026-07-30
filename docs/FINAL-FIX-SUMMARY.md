@@ -102,9 +102,9 @@ Examples (today: July 30, 2026):
 
 | נכס | תאריכים שסוננו | סטטוס |
 |-----|----------------|-------|
-| BAC | Fri Jul 31 (DTE=1) | ✅ סונן |
-| IWM | Jul 27-31 (DTE=-3 עד 1) | ✅ סונן |
-| JPM | Fri Jul 31 (DTE=1) | ✅ סונן |
+| SPY | Fri Jul 31 (DTE=1) | ✅ סונן |
+| SPY | Jul 27-31 (DTE=-3 עד 1) | ✅ סונן |
+| SPY | Fri Jul 31 (DTE=1) | ✅ סונן |
 | SPY | Jul 27-31 (DTE=-3 עד 1) | ✅ סונן |
 
 ### תוצאות Gemini:
@@ -122,13 +122,13 @@ Examples (today: July 30, 2026):
 
 ### בדיקה 1: קובץ CSV מסונן
 ```bash
-$ grep "Jul 31" assets/bac/merged_filtered_options.csv
+$ grep "Jul 31" assets/spy/merged_filtered_options.csv
 # אין תוצאות → ✅ סונן נכון
 ```
 
 ### בדיקה 2: דוח HTML
 ```bash
-$ grep "Short Leg.*07-31" assets/bac/bac_DACS-3.0_20260730*.html
+$ grep "Short Leg.*07-31" assets/spy/bac_DACS-3.0_20260730*.html
 # אין תוצאות → ✅ אין עסקאות עם Jul 31
 ```
 

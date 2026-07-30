@@ -22,18 +22,18 @@ Email attachments:
 
 ---
 
-## דוגמה - מייל ל-BRK.B
+## דוגמה - מייל ל-SPY
 
 ### Subject:
 ```
-DACS-3.0 Analysis Report - BRK.B
+DACS-3.0 Analysis Report - SPY
 ```
 
 ### Body:
 ```
 DACS-3.0 Options Strategy Analysis Report
 
-Asset: BRK.B
+Asset: SPY
 Report: BRK.B_DACS-3.0_20260730_144129.html
 
 Attached files (4):
@@ -135,7 +135,7 @@ Sending email to eb.bitan@gmail.com...
 
 ### 3. ✅ ניקוי אוטומטי (STEP 0)
 - מנקה assets/ לפני כל הרצה
-- שומר רק bac/
+- שומר רק spy/
 
 ### 4. ✅ שליחת כל הקבצים במייל (חדש!)
 - HTML + כל CSV files

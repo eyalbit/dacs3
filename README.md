@@ -32,7 +32,7 @@ python csv_united.py
 - מפעיל את ההוראות המלאות של DACS
 - מנתח לפי כללי DACS-3.0 ו-DACS-1
 - **עובד בדיוק כמו ה-Gem הפרטי ב-Gemini!**
-- **שומר דו"ח HTML** מעוצב בתיקיית הקלט (לדוגמה: `bac/bac_DACS-3.0_20260728_111829.html`)
+- **שומר דו"ח HTML** מעוצב בתיקיית הקלט (לדוגמה: `assets/AAPL/AAPL_DACS-3.0_20260728_111829.html`)
 
 ## התקנה
 
@@ -54,11 +54,13 @@ GMAIL_PASSWORD=your-app-password      # אופציונלי - לשליחת מיי
 
 ### 3. הגדרות נוספות ב-`csv_united.py`:
 ```python
-DEFAULT_ASSET = 'bac'           # שנה ל: 'spy', 'iwm', 'jpm'
 DELTA_MIN = 0.07                # טווח Delta מינימלי
 DELTA_MAX = 0.21                # טווח Delta מקסימלי
 AUTO_SEND_EMAIL = False         # True = שליחת מייל אוטומטית
 ```
+
+**הערה:** המערכת עובדת דינמית - מניות נשלפות אוטומטית מ-Barchart Screener.
+אין צורך להגדיר מניות ספציפיות בקוד!
 
 ## שימוש
 
@@ -67,10 +69,11 @@ AUTO_SEND_EMAIL = False         # True = שליחת מייל אוטומטית
 python csv_united.py
 ```
 **מה זה עושה:**
-1. מיזוג קבצי CSV מהתיקייה (לפי `DEFAULT_ASSET`)
-2. ניתוח Gemini עם הוראות DACS-3.0
-3. יצירת דו"ח HTML מעוצב
-4. שליחת מייל (אם `AUTO_SEND_EMAIL=True`)
+1. שליפת מניות מ-Barchart Screener
+2. מיזוג קבצי CSV עבור כל מניה
+3. ניתוח Gemini עם הוראות DACS-3.0
+4. יצירת דו"ח HTML מעוצב לכל מניה
+5. שליחת מיילים (אם `AUTO_SEND_EMAIL=True`)
 
 ### ריצה חלקית - רק מיזוג CSV
 ```bash
@@ -83,13 +86,13 @@ python csv_united.py --merge-only
 
 ### משימוש בקוד Python
 ```python
-from csv_united import send_to_gem, process_csv_folder
+from csv_united import process_all_assets
 
-# רק מיזוג
-output_path = process_csv_folder(folder='assets/bac')
+# ניתוח מלא של כל המניות (אוטומטי מה-screener)
+results = process_all_assets(merge_only=False)
 
-# ניתוח מלא
-result = send_to_gem(folder='assets/bac')
+# רק מיזוג בלי Gemini
+results = process_all_assets(merge_only=True)
 ```
 
 ## מבנה קבצים
@@ -97,30 +100,36 @@ result = send_to_gem(folder='assets/bac')
 ```
 dacs3/
 ├── csv_united.py              # הקוד הראשי
-├── example_gem_usage.py       # דוגמת שימוש
-├── test_csv_united.py         # טסטים
-├── bac/                       # תיקיית קבצי CSV (input)
-│   └── *.csv
+├── assets/                    # תיקיית קבצי CSV (נוצרת דינמית מה-screener)
+│   ├── AAPL/                  # כל מניה בתיקייה נפרדת
+│   │   ├── *.csv              # קבצי אופציות
+│   │   ├── merged_filtered_options.csv
+│   │   └── AAPL_DACS-3.0_*.html
+│   ├── MSFT/
+│   └── ...
+├── scraper-ts/                # TypeScript scraper (Barchart + CBOE)
+│   ├── src/
+│   └── package.json
 ├── agent-docs/                # מסמכי ידע של DACS Gem
-│   ├── 01_DACS_GPTS_MASTER_INSTRUCTIONS_READY_TO_PASTE.txt
+│   ├── 01_DACS_GPTS_MASTER_INSTRUCTIONS.txt
 │   ├── 03_DACS_1_MONTHLY_RULES.docx
-│   ├── 04_DACS_OUTPUT_PROTOCOL.docx
-│   ├── 05_OPTIONSTRAT_URL_PROTOCOL.docx
-│   ├── 06_DACS_INPUT_DATA_CONTRACT.docx
 │   └── .gemini_files_cache.json  # Cache (נוצר אוטומטית)
-├── GEM_USAGE.md               # הסבר מפורט
 └── README.md                  # המסמך הזה
 ```
 
 ## פונקציות עיקריות
 
-### `process_csv_folder(folder='bac')`
-מעבד את כל קבצי ה-CSV בתיקייה ויוצר קובץ מאוחד.
+### `process_all_assets(merge_only=False)`  🆕
+מעבד את **כל המניות** שנשלפו מה-screener:
+- מיזוג CSV לכל מניה
+- ניתוח Gemini עם DACS-3.0 (אלא אם `merge_only=True`)
+- יצירת HTML reports
+- שליחת מיילים
 
-### `send_merged_file_to_gemini(...)`
-שולח את הקובץ המאוחד ל-Gemini API (בלי Gem configuration).
+### `process_csv_folder(folder)`
+מעבד תיקייה בודדת - יוצר קובץ מאוחד.
 
-### `send_to_gem(...)`  🆕
+### `send_to_gem(folder)`  🆕
 שולח עם תצורת DACS Gem המלאה:
 - System Instructions
 - Knowledge files
@@ -135,10 +144,10 @@ dacs3/
 
 **אם עדכנת קובץ ב-agent-docs:**
 ```python
-from csv_united import clear_gemini_cache, send_to_gem
+from csv_united import clear_gemini_cache, process_all_assets
 
 clear_gemini_cache()
-result = send_to_gem(folder='bac', force_reupload_docs=True)
+results = process_all_assets()  # יעלה מחדש את המסמכים
 ```
 
 או פשוט מחק:

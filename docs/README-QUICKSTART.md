@@ -115,14 +115,14 @@ dacs3/
 │   └── package.json
 │
 ├── assets/                  # נתונים לפי מניה
-│   ├── BRK.B/
+│   ├── SPY/
 │   │   ├── BRK.B_quotedata_Jul_2026_xxx.csv    # חודש נוכחי
 │   │   ├── BRK.B_quotedata_Aug_2026_xxx.csv    # חודש הבא
 │   │   ├── merged_filtered_options.csv          # נתונים ממוזגים
 │   │   └── BRK.B_DACS-3.0_20260730_123456.html # דוח HTML
-│   ├── EA/
+│   ├── AAPL/
 │   ├── V/
-│   └── XLV/
+│   └── MSFT/
 │
 ├── agent-docs/              # DACS instructions for Gemini
 │   ├── 01_DACS_GPTS_MASTER_INSTRUCTIONS.txt
@@ -258,7 +258,7 @@ cd ..
 .\run-full-workflow.ps1
 
 # צפייה בדוחות
-cd assets/BRK.B
+cd assets/SPY
 start BRK.B_DACS-3.0_*.html
 
 # שינוי Delta range בקובץ csv_united.py

@@ -63,7 +63,7 @@ async function extractSymbols() {
       for (const link of symbolLinks) {
         const href = await link.getAttribute('href');
 
-        // Extract symbol from href: /stocks/quotes/BRK.B/overview → BRK.B
+        // Extract symbol from href: /stocks/quotes/SPY/overview → SPY
         if (href) {
           const match = href.match(/\/quotes\/([^\/]+)/);
           if (match && match[1]) {
