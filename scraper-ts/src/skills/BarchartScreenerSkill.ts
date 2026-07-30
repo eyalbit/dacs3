@@ -24,6 +24,7 @@ export interface ScreenerResult {
   data: string[][];
   csvPaths?: { [symbol: string]: string };
   screenerName?: string;
+  noSymbolsFound?: boolean;
 }
 
 export class BarchartScreenerSkill extends BaseSkill<ScreenerSkillConfig, ScreenerResult> {
@@ -83,6 +84,26 @@ export class BarchartScreenerSkill extends BaseSkill<ScreenerSkillConfig, Screen
       });
 
       const runResult = await screenerPage.runScreener();
+
+      // Save screenshot for debugging
+      try {
+        const screenshotPath = `./screenshots/screener-debug-${Date.now()}.png`;
+        await this.page.screenshot({ path: screenshotPath, fullPage: true });
+        console.log(`📸 Screenshot saved: ${screenshotPath}`);
+      } catch (e) {
+        console.log('Could not save screenshot');
+      }
+
+      // Check if "No symbols found" message appeared
+      if (runResult.noSymbolsFound) {
+        console.log('⚠️ No symbols found that match the requirements');
+        return this.success({
+          symbols: [],
+          data: [],
+          screenerName: this.config.screenerName,
+          noSymbolsFound: true,
+        });
+      }
 
       if (!runResult.success) {
         return this.error(runResult.error || 'Failed to run screener');

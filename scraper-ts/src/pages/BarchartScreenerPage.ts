@@ -90,9 +90,26 @@ export class BarchartScreenerPage extends BasePage {
   }
 
   /**
+   * Check if "No symbols found" message is displayed
+   */
+  async hasNoSymbolsMessage(): Promise<boolean> {
+    try {
+      const pageContent = await this.page.content();
+      return pageContent.includes('No symbols found that match the requirements');
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Check if results are available
    */
   async hasResults(): Promise<boolean> {
+    // First check for explicit "no symbols" message
+    if (await this.hasNoSymbolsMessage()) {
+      return false;
+    }
+
     const hasGrid = await this.isVisible(this.selectors.resultsGrid);
     const hasTable = await this.isVisible(this.selectors.resultsTable);
     const hasNoResultsMsg = await this.isVisible(this.selectors.noResultsMessage);
@@ -170,8 +187,12 @@ export class BarchartScreenerPage extends BasePage {
    */
   async extractSymbols(): Promise<string[]> {
     try {
+      console.log('Attempting to extract symbols...');
+      console.log('Using selector:', this.selectors.symbolLinks);
+
       // Try to extract from custom grid (Barchart's Angular component)
       const symbolLinks = await this.page.$$(this.selectors.symbolLinks);
+      console.log(`Found ${symbolLinks.length} symbol links with primary selector`);
 
       if (symbolLinks.length > 0) {
         const symbols: string[] = [];
@@ -193,9 +214,44 @@ export class BarchartScreenerPage extends BasePage {
       }
 
       // Fallback: Try traditional table extraction
+      console.log('Trying fallback: traditional table extraction...');
       const results = await this.extractResults();
+      console.log(`Extracted ${results.length} rows from table`);
 
       if (results.length === 0) {
+        console.log('No results found in table, trying alternative selectors...');
+
+        // Try alternative symbol selectors
+        const altSelectors = [
+          'a[href*="/quotes/"]',
+          'table td:first-child a',
+          '.symbol a',
+          'td.symbol a'
+        ];
+
+        for (const selector of altSelectors) {
+          console.log(`Trying selector: ${selector}`);
+          const links = await this.page.$$(selector);
+          console.log(`Found ${links.length} elements`);
+
+          if (links.length > 0) {
+            const symbols: string[] = [];
+            for (const link of links.slice(0, 20)) { // Limit to 20 to avoid too many
+              const href = await link.getAttribute('href');
+              if (href && href.includes('/quotes/')) {
+                const match = href.match(/\/quotes\/([^\/]+)/);
+                if (match && match[1]) {
+                  symbols.push(match[1]);
+                }
+              }
+            }
+            if (symbols.length > 0) {
+              console.log(`Successfully extracted ${symbols.length} symbols with selector: ${selector}`);
+              return symbols;
+            }
+          }
+        }
+
         return [];
       }
 
@@ -217,10 +273,23 @@ export class BarchartScreenerPage extends BasePage {
     symbols?: string[];
     data?: string[][];
     error?: string;
+    noSymbolsFound?: boolean;
   }> {
     try {
       await this.navigateToScreener();
       await this.clickSeeResults();
+
+      // Check for "No symbols found" message first
+      const hasNoSymbols = await this.hasNoSymbolsMessage();
+      if (hasNoSymbols) {
+        return {
+          success: false,
+          error: 'No symbols found that match the requirements',
+          noSymbolsFound: true,
+          symbols: [],
+          data: []
+        };
+      }
 
       if (!(await this.hasResults())) {
         return { success: false, error: 'No results found' };

@@ -160,6 +160,27 @@ async function main() {
       process.exit(1);
     }
 
+    // Check if no symbols were found
+    if (result.data?.noSymbolsFound) {
+      console.log('\n⚠️ No symbols found that match the requirements!\n');
+      console.log(`📊 Screener URL: ${screenerUrl}`);
+
+      // Create a marker file to signal no results
+      const fs = require('fs');
+      const noResultsFile = path.join(args.assetsPath!, 'NO_SYMBOLS_FOUND.json');
+      fs.mkdirSync(path.dirname(noResultsFile), { recursive: true });
+      fs.writeFileSync(noResultsFile, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        screenerUrl: screenerUrl,
+        screenerName: result.data.screenerName || 'Unknown Screener',
+        message: 'No symbols found that match the requirements'
+      }, null, 2));
+
+      console.log(`📄 Created marker file: ${noResultsFile}`);
+      console.log('\n✅ Screener completed (no results to process)\n');
+      process.exit(0);
+    }
+
     // Display results
     console.log('\n✅ Screener completed successfully!\n');
     console.log(`📊 Results:`);

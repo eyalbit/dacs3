@@ -920,6 +920,111 @@ For support: eb.bitan@gmail.com
         return False
 
 
+def send_no_symbols_email(screener_url, screener_name='Barchart Screener', to_email=EMAIL_TO, from_email=None, smtp_server=None, smtp_port=587, smtp_password=None):
+    """
+    Send email notification when no symbols are found by the screener.
+
+    Args:
+        screener_url: URL of the screener that returned no results
+        screener_name: Name of the screener
+        to_email: Recipient email address
+        from_email: Sender email (defaults to GMAIL_USER from .env)
+        smtp_server: SMTP server (defaults to smtp.gmail.com)
+        smtp_port: SMTP port (default 587 for TLS)
+        smtp_password: Email password/app password (defaults to GMAIL_PASSWORD from .env)
+
+    Returns:
+        bool: True if sent successfully, False otherwise
+    """
+    # Load credentials from environment
+    if from_email is None:
+        from_email = os.environ.get('GMAIL_USER')
+    if smtp_password is None:
+        smtp_password = os.environ.get('GMAIL_PASSWORD')
+    if smtp_server is None:
+        smtp_server = 'smtp.gmail.com'
+
+    # Validate required parameters
+    if not from_email or not smtp_password:
+        print('[X] Missing email credentials. Set GMAIL_USER and GMAIL_PASSWORD in .env file')
+        return False
+
+    try:
+        from datetime import datetime
+        date_str = datetime.now().strftime('%d/%m/%Y %H:%M')
+
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = to_email
+        msg['Subject'] = f'⚠️ DACS-3.0: No Symbols Found - {date_str}'
+
+        # Email body
+        body = f"""
+⚠️ DACS-3.0 Screener Alert: No Results
+{'='*60}
+
+The Barchart screener did not find any symbols matching the requirements.
+
+Screener Details:
+  • Name: {screener_name}
+  • URL: {screener_url}
+  • Date: {date_str}
+
+Message:
+  No symbols found that match the requirements.
+
+Action Required:
+  • Verify the screener filters are correct
+  • Check if market conditions have changed
+  • Consider adjusting the screening criteria
+
+No trades will be processed for this run.
+
+{'='*60}
+Automated message from DACS-3.0 Analysis System
+"""
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Send email
+        print(f'[i] Connecting to {smtp_server}:{smtp_port}...')
+
+        try:
+            # Try port 587 (TLS)
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(from_email, smtp_password)
+            server.send_message(msg)
+            server.quit()
+            print(f'[OK] Email sent successfully to {to_email}')
+            return True
+
+        except Exception as e1:
+            print(f'  Port 587 failed: {e1}')
+            # Try port 465 (SSL)
+            try:
+                print('  Trying port 465 (SSL)...')
+                server = smtplib.SMTP_SSL(smtp_server, 465, timeout=10)
+                server.login(from_email, smtp_password)
+                server.send_message(msg)
+                server.quit()
+                print(f'[OK] Email sent successfully to {to_email}')
+                return True
+            except Exception as e2:
+                print(f'  Port 465 failed: {e2}')
+                raise e2
+
+    except smtplib.SMTPAuthenticationError:
+        print('[X] Email authentication failed. Check your GMAIL_USER and GMAIL_PASSWORD.')
+        return False
+    except Exception as e:
+        print(f'[X] Failed to send email: {e}')
+        return False
+
+
 def send_merged_file_to_gemini(file_path=None, folder=None, api_key=None, prompt=None, model=None, allow_retry=True):
     """DEPRECATED: Use process_all_assets() for dynamic multi-asset processing."""
     if file_path is None:
@@ -1338,6 +1443,44 @@ def scrape_and_process_all(scrape_first=True, merge_only=False):
 
 def process_all_assets(merge_only=False):
     """Process all asset folders: merge CSVs, run Gemini analysis, create HTML, send email."""
+
+    # Check if NO_SYMBOLS_FOUND marker file exists
+    no_symbols_file = os.path.join(BASE_ASSETS_FOLDER, 'NO_SYMBOLS_FOUND.json')
+    if os.path.exists(no_symbols_file):
+        print(f'\n{"="*80}')
+        print('NO SYMBOLS FOUND FROM SCREENER')
+        print(f'{"="*80}')
+
+        # Read the marker file
+        try:
+            with open(no_symbols_file, 'r', encoding='utf-8') as f:
+                no_symbols_data = json.load(f)
+
+            screener_url = no_symbols_data.get('screenerUrl', 'Unknown URL')
+            screener_name = no_symbols_data.get('screenerName', 'Unknown Screener')
+            message = no_symbols_data.get('message', 'No symbols found')
+
+            print(f'[!] {message}')
+            print(f'[i] Screener: {screener_name}')
+            print(f'[i] URL: {screener_url}')
+
+            # Send email notification about no results
+            send_email_enabled = os.environ.get('SEND_EMAIL', '0') == '1'
+            if send_email_enabled:
+                print(f'\n=== Sending Email Notification ===')
+                email_sent = send_no_symbols_email(screener_url, screener_name)
+                if email_sent:
+                    print('[OK] Email notification sent')
+                else:
+                    print('[!] Failed to send email notification')
+            else:
+                print('[i] Email sending disabled (SEND_EMAIL not set to 1 in environment)')
+
+            return []
+
+        except Exception as exc:
+            print(f'[!] Error reading NO_SYMBOLS_FOUND file: {exc}')
+
     asset_folders = _get_all_asset_folders()
 
     if not asset_folders:
