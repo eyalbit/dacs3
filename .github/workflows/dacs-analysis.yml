@@ -186,17 +186,23 @@ jobs:
             exit 0
           fi
 
-          # Count email success/failure messages in logs
-          EMAIL_SENT=$(grep -c '\[OK\] Email sent successfully' analysis.log || echo "0")
-          EMAIL_FAILED=$(grep -c '\[!\] Email not sent' analysis.log || echo "0")
-          EMAIL_DISABLED=$(grep -c 'Email sending disabled' analysis.log || echo "0")
+          # Count email success/failure messages in logs (ensure clean integer output)
+          EMAIL_SENT=$(grep -c '\[OK\] Email sent successfully' analysis.log 2>/dev/null || echo "0")
+          EMAIL_FAILED=$(grep -c '\[!\] Email not sent' analysis.log 2>/dev/null || echo "0")
+          EMAIL_DISABLED=$(grep -c 'Email sending disabled' analysis.log 2>/dev/null || echo "0")
+
+          # Clean up any whitespace or newlines
+          EMAIL_SENT=$(echo "$EMAIL_SENT" | tr -d '\n\r ')
+          EMAIL_FAILED=$(echo "$EMAIL_FAILED" | tr -d '\n\r ')
+          EMAIL_DISABLED=$(echo "$EMAIL_DISABLED" | tr -d '\n\r ')
 
           echo "- Emails sent: $EMAIL_SENT" >> $GITHUB_STEP_SUMMARY
           echo "- Emails failed: $EMAIL_FAILED" >> $GITHUB_STEP_SUMMARY
 
-          if [ "$EMAIL_SENT" -gt "0" ]; then
+          # Use safer comparison that handles non-numeric values
+          if [ ! -z "$EMAIL_SENT" ] && [ "$EMAIL_SENT" != "0" ]; then
             echo "✅ Emails were sent successfully"
-          elif [ "$EMAIL_DISABLED" -gt "0" ]; then
+          elif [ ! -z "$EMAIL_DISABLED" ] && [ "$EMAIL_DISABLED" != "0" ]; then
             echo "ℹ️ Email sending is disabled (SEND_EMAIL not set)"
           else
             echo "⚠️ No emails were sent - check GMAIL credentials in secrets"
