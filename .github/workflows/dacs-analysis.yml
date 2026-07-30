@@ -34,8 +34,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: scraper-ts/package-lock.json
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Python dependencies
         run: |
@@ -44,7 +43,9 @@ jobs:
 
       - name: Install TypeScript dependencies
         working-directory: scraper-ts
-        run: npm ci
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm ci --no-audit
 
       - name: Create .env file (root)
         run: |
