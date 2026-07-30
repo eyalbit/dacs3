@@ -80,7 +80,14 @@ jobs:
           echo "=== Screener Log (last 50 lines) ==="
           tail -50 screener.log
 
-          # Extract symbols count
+          # Check if "No symbols found" message exists
+          if grep -q "No symbols found that match the requirements" screener.log; then
+            echo "symbols_count=0" >> $GITHUB_OUTPUT
+            echo "⚠️ No symbols found (screener returned no results)"
+            exit 0  # This is not a failure - exit successfully
+          fi
+
+          # Extract symbols count from "Symbols found: N" line
           SYMBOLS=$(grep -oP 'Symbols found: \K\d+' screener.log || echo "0")
           echo "symbols_count=$SYMBOLS" >> $GITHUB_OUTPUT
           echo "✓ Found $SYMBOLS symbols"
@@ -124,17 +131,31 @@ jobs:
           echo "**Run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "**Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Results:" >> $GITHUB_STEP_SUMMARY
-          echo "- Symbols found: ${{ steps.screener.outputs.symbols_count }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Assets processed: ${{ steps.analysis.outputs.assets_processed }}" >> $GITHUB_STEP_SUMMARY
+
+          SYMBOLS_COUNT="${{ steps.screener.outputs.symbols_count }}"
+
+          if [ "$SYMBOLS_COUNT" = "0" ]; then
+            echo "### ⚠️ No Symbols Found" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The screener did not find any symbols matching the requirements." >> $GITHUB_STEP_SUMMARY
+            echo "An email notification has been sent with the screener URL." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Results:" >> $GITHUB_STEP_SUMMARY
+            echo "- Symbols found: $SYMBOLS_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "- Assets processed: ${{ steps.analysis.outputs.assets_processed }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # List generated reports
           if [ -d "assets" ]; then
-            echo "### Generated Reports:" >> $GITHUB_STEP_SUMMARY
-            find assets -name "DACS*.html" -type f | while read file; do
-              echo "- \`$(basename $file)\`" >> $GITHUB_STEP_SUMMARY
-            done
+            REPORT_COUNT=$(find assets -name "DACS*.html" -type f | wc -l)
+            if [ "$REPORT_COUNT" -gt "0" ]; then
+              echo "### Generated Reports:" >> $GITHUB_STEP_SUMMARY
+              find assets -name "DACS*.html" -type f | while read file; do
+                echo "- \`$(basename $file)\`" >> $GITHUB_STEP_SUMMARY
+              done
+            fi
           fi
 
       - name: Check for errors
@@ -154,15 +175,23 @@ jobs:
           echo "## Email Status" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
+          if [ ! -f "analysis.log" ]; then
+            echo "⚠️ No analysis log found" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
           # Count email success/failure messages in logs
           EMAIL_SENT=$(grep -c '\[OK\] Email sent successfully' analysis.log || echo "0")
           EMAIL_FAILED=$(grep -c '\[!\] Email not sent' analysis.log || echo "0")
+          EMAIL_DISABLED=$(grep -c 'Email sending disabled' analysis.log || echo "0")
 
           echo "- Emails sent: $EMAIL_SENT" >> $GITHUB_STEP_SUMMARY
           echo "- Emails failed: $EMAIL_FAILED" >> $GITHUB_STEP_SUMMARY
 
           if [ "$EMAIL_SENT" -gt "0" ]; then
             echo "✅ Emails were sent successfully"
+          elif [ "$EMAIL_DISABLED" -gt "0" ]; then
+            echo "ℹ️ Email sending is disabled (SEND_EMAIL not set)"
           else
             echo "⚠️ No emails were sent - check GMAIL credentials in secrets"
           fi
