@@ -1235,9 +1235,9 @@ Syntax rules (MUST follow exactly):
 - Separator: comma with NO space between legs
 
 Example format for Call diagonal spread (using TICKER from your CSV):
-- Short: {TICKER} Jul 31 2026 Strike {X} Call
-- Long: {TICKER} Aug 7 2026 Strike {Y} Call
-- Correct URL: https://optionstrat.com/build/diagonal-call-spread/{TICKER}/-.{TICKER}260731C{X},.{TICKER}260807C{Y}
+- Short: {{TICKER}} Jul 31 2026 Strike {{X}} Call
+- Long: {{TICKER}} Aug 7 2026 Strike {{Y}} Call
+- Correct URL: https://optionstrat.com/build/diagonal-call-spread/{{TICKER}}/-.{{TICKER}}260731C{{X}},.{{TICKER}}260807C{{Y}}
 
 Output Format Requirements (CRITICAL - Follow EXACTLY):
 --------------------------------------------------------
