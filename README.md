@@ -46,11 +46,15 @@ cp .env.example .env
 GEMINI_API_KEY=your-gemini-api-key-here
 GMAIL_USER=your-email@gmail.com       # אופציונלי - לשליחת מיילים
 GMAIL_PASSWORD=your-app-password      # אופציונלי - לשליחת מיילים
+EMAIL_RECIPIENTS=user1@gmail.com,user2@gmail.com  # אופציונלי - נמענים מרובים
+SEND_EMAIL=1                          # 1=שלח מיילים, 0=כבה
 ```
 
 **לקבלת API Key:**
 - Gemini: https://ai.google.dev/
 - Gmail App Password: https://myaccount.google.com/apppasswords
+
+**לשליחת מיילים למספר נמענים:** ראה [docs/EMAIL-MULTIPLE-RECIPIENTS.md](docs/EMAIL-MULTIPLE-RECIPIENTS.md)
 
 ### 3. הגדרות נוספות ב-`csv_united.py`:
 ```python
@@ -193,6 +197,7 @@ python test_csv_united.py
 
 - 📖 [GEM_USAGE.md](GEM_USAGE.md) - שימוש ב-Gemini Gem
 - 🚀 [GITHUB-QUICKSTART.md](GITHUB-QUICKSTART.md) - הרצה אוטומטית בענן
+- 📧 [docs/EMAIL-MULTIPLE-RECIPIENTS.md](docs/EMAIL-MULTIPLE-RECIPIENTS.md) - שליחת מיילים למספר נמענים
 - 📂 [docs/](docs/) - תיעוד מלא (24 מסמכים)
 
 ## 🔄 GitHub Actions Pipeline

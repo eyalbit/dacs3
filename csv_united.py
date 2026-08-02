@@ -46,10 +46,11 @@ BASE_ASSETS_FOLDER = 'assets'        # Base folder containing all asset folders 
 AGENT_DOCS_FOLDER = 'agent-docs'     # Folder containing instruction documents
 
 # ===== Email Configuration =====
-EMAIL_TO = 'eb.bitan@gmail.com'      # Email address to send reports to
+EMAIL_TO = 'eb.bitan@gmail.com'      # Default email address (overridden by EMAIL_RECIPIENTS env var)
 # Note: Email sending is controlled ONLY by SEND_EMAIL environment variable
 # Set SEND_EMAIL=1 in GitHub Secrets to enable email sending in CI/CD
 # Local runs will NOT send emails unless SEND_EMAIL=1 is set in .env
+# To send to multiple recipients, set EMAIL_RECIPIENTS=email1@gmail.com,email2@gmail.com in .env
 
 # ===== Options Filtering Rules (used by Python code) =====
 DELTA_MIN = 0.07                     # Minimum Delta for CALL options (used in _filter_rows)
@@ -767,7 +768,7 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
 
     Args:
         html_file_path: Path to the HTML report file
-        to_email: Recipient email address
+        to_email: Recipient email address or comma-separated list of addresses
         from_email: Sender email (defaults to GMAIL_USER from .env)
         smtp_server: SMTP server (defaults to smtp.gmail.com)
         smtp_port: SMTP port (default 587 for TLS)
@@ -784,6 +785,17 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
     if smtp_server is None:
         smtp_server = 'smtp.gmail.com'
 
+    # Get email recipients from environment variable if set
+    env_recipients = os.environ.get('EMAIL_RECIPIENTS')
+    if env_recipients:
+        to_email = env_recipients
+
+    # Parse recipients (support comma-separated list)
+    recipients = [email.strip() for email in to_email.split(',') if email.strip()]
+    if not recipients:
+        print('[X] No valid email recipients provided')
+        return False
+
     # Validate required parameters
     if not from_email or not smtp_password:
         print('[X] Missing email credentials. Set GMAIL_USER and GMAIL_PASSWORD in .env file')
@@ -797,7 +809,7 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
 
     print(f'[i] Email config:')
     print(f'    From: {from_email}')
-    print(f'    To: {to_email}')
+    print(f'    To: {", ".join(recipients)}')
     print(f'    Server: {smtp_server}:{smtp_port}')
 
     if not os.path.exists(html_file_path):
@@ -824,7 +836,7 @@ def send_email_with_html_report(html_file_path, to_email=EMAIL_TO, from_email=No
         # Create message
         msg = MIMEMultipart()
         msg['From'] = from_email
-        msg['To'] = to_email
+        msg['To'] = ', '.join(recipients)
         subject_date = f' - {date_str}' if date_str else ''
         msg['Subject'] = f'📊 DACS-3.0 Report: {asset_name}{subject_date}'
 
@@ -882,7 +894,7 @@ For support: eb.bitan@gmail.com
             msg.attach(part)
 
         # Send email - try both ports
-        print(f'Sending email to {to_email}...')
+        print(f'Sending email to {len(recipients)} recipient(s): {", ".join(recipients)}')
 
         # Try port 587 first (TLS)
         try:
@@ -892,7 +904,7 @@ For support: eb.bitan@gmail.com
             server.login(from_email, smtp_password)
             server.send_message(msg)
             server.quit()
-            print(f'[OK] Email sent successfully to {to_email}')
+            print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
             return True
         except Exception as e1:
             print(f'  Port 587 failed: {e1}')
@@ -904,7 +916,7 @@ For support: eb.bitan@gmail.com
                 server.login(from_email, smtp_password)
                 server.send_message(msg)
                 server.quit()
-                print(f'[OK] Email sent successfully to {to_email}')
+                print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
                 return True
             except Exception as e2:
                 print(f'  Port 465 failed: {e2}')
@@ -927,7 +939,7 @@ def send_no_symbols_email(screener_url, screener_name='Barchart Screener', to_em
     Args:
         screener_url: URL of the screener that returned no results
         screener_name: Name of the screener
-        to_email: Recipient email address
+        to_email: Recipient email address or comma-separated list of addresses
         from_email: Sender email (defaults to GMAIL_USER from .env)
         smtp_server: SMTP server (defaults to smtp.gmail.com)
         smtp_port: SMTP port (default 587 for TLS)
@@ -944,6 +956,17 @@ def send_no_symbols_email(screener_url, screener_name='Barchart Screener', to_em
     if smtp_server is None:
         smtp_server = 'smtp.gmail.com'
 
+    # Get email recipients from environment variable if set
+    env_recipients = os.environ.get('EMAIL_RECIPIENTS')
+    if env_recipients:
+        to_email = env_recipients
+
+    # Parse recipients (support comma-separated list)
+    recipients = [email.strip() for email in to_email.split(',') if email.strip()]
+    if not recipients:
+        print('[X] No valid email recipients provided')
+        return False
+
     # Validate required parameters
     if not from_email or not smtp_password:
         print('[X] Missing email credentials. Set GMAIL_USER and GMAIL_PASSWORD in .env file')
@@ -956,7 +979,7 @@ def send_no_symbols_email(screener_url, screener_name='Barchart Screener', to_em
         # Create message
         msg = MIMEMultipart()
         msg['From'] = from_email
-        msg['To'] = to_email
+        msg['To'] = ', '.join(recipients)
         msg['Subject'] = f'⚠️ DACS-3.0: No Symbols Found - {date_str}'
 
         # Email body
@@ -989,6 +1012,7 @@ Automated message from DACS-3.0 Analysis System
 
         # Send email
         print(f'[i] Connecting to {smtp_server}:{smtp_port}...')
+        print(f'[i] Sending to {len(recipients)} recipient(s): {", ".join(recipients)}')
 
         try:
             # Try port 587 (TLS)
@@ -999,7 +1023,7 @@ Automated message from DACS-3.0 Analysis System
             server.login(from_email, smtp_password)
             server.send_message(msg)
             server.quit()
-            print(f'[OK] Email sent successfully to {to_email}')
+            print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
             return True
 
         except Exception as e1:
@@ -1011,7 +1035,7 @@ Automated message from DACS-3.0 Analysis System
                 server.login(from_email, smtp_password)
                 server.send_message(msg)
                 server.quit()
-                print(f'[OK] Email sent successfully to {to_email}')
+                print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
                 return True
             except Exception as e2:
                 print(f'  Port 465 failed: {e2}')

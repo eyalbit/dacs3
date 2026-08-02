@@ -9,7 +9,20 @@
       "Bash(cmd.exe /c \"python csv_united.py 2>&1\")",
       "Bash(powershell.exe -Command \"python csv_united.py 2>&1 | Tee-Object -FilePath full_run.log\")",
       "Bash(powershell.exe -Command \"Get-Command python* | Select-Object -First 1 -ExpandProperty Source\")",
-      "Bash(\"D:\\\\Users\\\\eyal.bitan\\\\.local\\\\bin\\\\python3.14.exe\" csv_united.py)"
+      "Bash(\"D:\\\\Users\\\\eyal.bitan\\\\.local\\\\bin\\\\python3.14.exe\" csv_united.py)",
+      "Bash(npm --version)",
+      "Bash(tee screener_test.log)",
+      "Bash(python3 -m py_compile csv_united.py)",
+      "Bash(rm -rf assets/*)",
+      "Bash(mkdir -p assets)",
+      "Bash(find /c/Users /d/Users -maxdepth 3 -name \"python.exe\" 2>/dev/null | grep -v AppData | head -3)",
+      "Read(//d/Users/**)",
+      "Bash(.venv/Scripts/python.exe csv_united.py --no-scrape)",
+      "Bash(SEND_EMAIL=1 .venv/Scripts/python.exe csv_united.py --no-scrape)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh run *)"
     ]
   }
 }
