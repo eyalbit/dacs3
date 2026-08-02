@@ -57,7 +57,7 @@ jobs:
           cat > .env << EOF
           BARCHART_EMAIL=${{ secrets.BARCHART_EMAIL }}
           BARCHART_PASSWORD=${{ secrets.BARCHART_PASSWORD }}
-          BARCHART_SCREENER_URL=${{ secrets.BARCHART_SCREENER_URL }}
+          BARCHART_SCREENER_URL=${{ vars.BARCHART_SCREENER_URL }}
           BARCHART_LOGIN_URL=https://www.barchart.com/login
           EOF
 
