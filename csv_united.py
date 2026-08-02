@@ -902,7 +902,7 @@ For support: eb.bitan@gmail.com
             server = smtplib.SMTP(smtp_server, 587, timeout=10)
             server.starttls()
             server.login(from_email, smtp_password)
-            server.send_message(msg)
+            server.sendmail(from_email, recipients, msg.as_string())
             server.quit()
             print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
             return True
@@ -914,7 +914,7 @@ For support: eb.bitan@gmail.com
                 print('  Trying port 465 (SSL)...')
                 server = smtplib.SMTP_SSL(smtp_server, 465, timeout=10)
                 server.login(from_email, smtp_password)
-                server.send_message(msg)
+                server.sendmail(from_email, recipients, msg.as_string())
                 server.quit()
                 print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
                 return True
@@ -1021,7 +1021,7 @@ Automated message from DACS-3.0 Analysis System
             server.starttls()
             server.ehlo()
             server.login(from_email, smtp_password)
-            server.send_message(msg)
+            server.sendmail(from_email, recipients, msg.as_string())
             server.quit()
             print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
             return True
@@ -1033,7 +1033,7 @@ Automated message from DACS-3.0 Analysis System
                 print('  Trying port 465 (SSL)...')
                 server = smtplib.SMTP_SSL(smtp_server, 465, timeout=10)
                 server.login(from_email, smtp_password)
-                server.send_message(msg)
+                server.sendmail(from_email, recipients, msg.as_string())
                 server.quit()
                 print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
                 return True
