@@ -1470,6 +1470,18 @@ def process_all_assets(merge_only=False):
 
     # Check if NO_SYMBOLS_FOUND marker file exists
     no_symbols_file = os.path.join(BASE_ASSETS_FOLDER, 'NO_SYMBOLS_FOUND.json')
+    print(f'[i] Checking for NO_SYMBOLS_FOUND marker: {no_symbols_file}')
+    print(f'[i] File exists: {os.path.exists(no_symbols_file)}')
+    if os.path.exists(BASE_ASSETS_FOLDER):
+        print(f'[i] Assets folder exists, contents:')
+        try:
+            for item in os.listdir(BASE_ASSETS_FOLDER):
+                print(f'    - {item}')
+        except Exception as e:
+            print(f'    [!] Error listing: {e}')
+    else:
+        print(f'[!] Assets folder does not exist: {BASE_ASSETS_FOLDER}')
+
     if os.path.exists(no_symbols_file):
         print(f'\n{"="*80}')
         print('NO SYMBOLS FOUND FROM SCREENER')

@@ -161,6 +161,9 @@ async function main() {
     }
 
     // Check if no symbols were found
+    console.log(`\n[DEBUG] Checking noSymbolsFound: ${result.data?.noSymbolsFound}`);
+    console.log(`[DEBUG] result.data:`, JSON.stringify(result.data, null, 2));
+
     if (result.data?.noSymbolsFound) {
       console.log('\n⚠️ No symbols found that match the requirements!\n');
       console.log(`📊 Screener URL: ${screenerUrl}`);
@@ -168,6 +171,9 @@ async function main() {
       // Create a marker file to signal no results
       const fs = require('fs');
       const noResultsFile = path.join(args.assetsPath!, 'NO_SYMBOLS_FOUND.json');
+      console.log(`[DEBUG] Creating marker file at: ${noResultsFile}`);
+      console.log(`[DEBUG] Assets path directory: ${path.dirname(noResultsFile)}`);
+
       fs.mkdirSync(path.dirname(noResultsFile), { recursive: true });
       fs.writeFileSync(noResultsFile, JSON.stringify({
         timestamp: new Date().toISOString(),
@@ -177,6 +183,7 @@ async function main() {
       }, null, 2));
 
       console.log(`📄 Created marker file: ${noResultsFile}`);
+      console.log(`[DEBUG] File exists after creation: ${fs.existsSync(noResultsFile)}`);
       console.log('\n✅ Screener completed (no results to process)\n');
       process.exit(0);
     }
