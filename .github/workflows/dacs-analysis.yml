@@ -48,7 +48,7 @@ jobs:
           GMAIL_USER=${{ secrets.GMAIL_USER }}
           GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}
           EMAIL_RECIPIENTS=${{ secrets.EMAIL_RECIPIENTS }}
-          SEND_EMAIL=${{ secrets.SEND_EMAIL }}
+          SEND_EMAIL=${{ inputs.send_email && '1' || '0' }}
           EOF
 
       - name: Create .env file (scraper-ts)
