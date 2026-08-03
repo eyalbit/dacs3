@@ -895,6 +895,8 @@ For support: eb.bitan@gmail.com
 
         # Send email - try both ports
         print(f'Sending email to {len(recipients)} recipient(s): {", ".join(recipients)}')
+        print(f'[DEBUG] Recipients list: {recipients}')
+        print(f'[DEBUG] Recipients type: {type(recipients)}')
 
         # Try port 587 first (TLS)
         try:
@@ -902,6 +904,7 @@ For support: eb.bitan@gmail.com
             server = smtplib.SMTP(smtp_server, 587, timeout=10)
             server.starttls()
             server.login(from_email, smtp_password)
+            print(f'[DEBUG] About to call sendmail with: from={from_email}, to={recipients}')
             server.sendmail(from_email, recipients, msg.as_string())
             server.quit()
             print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
@@ -1013,6 +1016,8 @@ Automated message from DACS-3.0 Analysis System
         # Send email
         print(f'[i] Connecting to {smtp_server}:{smtp_port}...')
         print(f'[i] Sending to {len(recipients)} recipient(s): {", ".join(recipients)}')
+        print(f'[DEBUG] Recipients list: {recipients}')
+        print(f'[DEBUG] Recipients type: {type(recipients)}')
 
         try:
             # Try port 587 (TLS)
@@ -1021,6 +1026,7 @@ Automated message from DACS-3.0 Analysis System
             server.starttls()
             server.ehlo()
             server.login(from_email, smtp_password)
+            print(f'[DEBUG] About to call sendmail with: from={from_email}, to={recipients}')
             server.sendmail(from_email, recipients, msg.as_string())
             server.quit()
             print(f'[OK] Email sent successfully to {len(recipients)} recipient(s)')
