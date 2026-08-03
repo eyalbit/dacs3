@@ -52,9 +52,9 @@ jobs:
           cat > .env << EOF
           GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL=gemini-flash-lite-latest
-          GMAIL_USER=${{ secrets.GMAIL_USER }}
+          GMAIL_USER=${{ vars.GMAIL_USER }}
           GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}
-          EMAIL_RECIPIENTS=${{ secrets.EMAIL_RECIPIENTS }}
+          EMAIL_RECIPIENTS=${{ vars.EMAIL_RECIPIENTS }}
           SEND_EMAIL=${SEND_EMAIL_VALUE}
           EOF
 
