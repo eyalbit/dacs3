@@ -42,20 +42,13 @@ jobs:
 
       - name: Create .env file (root)
         run: |
-          # Set SEND_EMAIL based on workflow input (default: true)
-          if [ "${{ inputs.send_email }}" = "true" ]; then
-            SEND_EMAIL_VALUE="1"
-          else
-            SEND_EMAIL_VALUE="0"
-          fi
-
           cat > .env << EOF
           GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL=gemini-flash-lite-latest
           GMAIL_USER=${{ vars.GMAIL_USER }}
           GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}
           EMAIL_RECIPIENTS=${{ vars.EMAIL_RECIPIENTS }}
-          SEND_EMAIL=${SEND_EMAIL_VALUE}
+          SEND_EMAIL=${{ vars.SEND_EMAIL }}
           EOF
 
       - name: Create .env file (scraper-ts)
