@@ -238,6 +238,12 @@ async function main() {
         page = await context.newPage();
       }
 
+      // Ensure page is initialized
+      if (!page) {
+        console.error('❌ Browser page not initialized');
+        process.exit(1);
+      }
+
       const optionChainSkill = new CboeOptionChainSkill(page, {
         symbols: symbols,
         assetsBasePath: args.assetsPath,
