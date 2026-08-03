@@ -8,6 +8,10 @@ on:
         required: false
         type: boolean
         default: true
+      manual_symbols:
+        description: 'Manual symbols (comma-separated, e.g. AAPL,TSLA,MSFT - skip screener)'
+        required: false
+        type: string
 
 jobs:
   analyze:
@@ -69,8 +73,14 @@ jobs:
         id: screener
         working-directory: scraper-ts
         run: |
-          echo "Running Barchart Screener..."
-          npm run screener 2>&1 | tee screener.log
+          # Check if manual symbols are provided
+          if [ -n "${{ inputs.manual_symbols }}" ]; then
+            echo "Running with manual symbols: ${{ inputs.manual_symbols }}"
+            npm run screener -- --symbols "${{ inputs.manual_symbols }}" 2>&1 | tee screener.log
+          else
+            echo "Running Barchart Screener..."
+            npm run screener 2>&1 | tee screener.log
+          fi
 
           echo "=== Screener Log (last 50 lines) ==="
           tail -50 screener.log

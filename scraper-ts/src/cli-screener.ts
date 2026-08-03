@@ -20,6 +20,7 @@ interface CliArgs {
   assetsPath?: string;
   clearSession?: boolean;
   optionChains?: boolean;
+  symbols?: string[];
 }
 
 function parseArgs(): CliArgs {
@@ -43,6 +44,8 @@ function parseArgs(): CliArgs {
       args.assetsPath = process.argv[++i];
     } else if (arg === '--clear-session') {
       args.clearSession = true;
+    } else if (arg === '--symbols' && i + 1 < process.argv.length) {
+      args.symbols = process.argv[++i].split(',').map(s => s.trim()).filter(s => s);
     } else if (arg === '--help' || arg === '-h') {
       printHelp();
       process.exit(0);
@@ -65,6 +68,7 @@ Options:
   --no-option-chains     Skip CBOE option chain extraction
   --assets <path>        Base assets directory (default: ../assets)
   --clear-session        Clear saved session and force fresh login
+  --symbols <list>       Comma-separated symbols (skip screener, analyze these directly)
   --help, -h             Show this help message
 
 Examples:
@@ -73,6 +77,7 @@ Examples:
   npm run screener -- --assets ./my-assets
   npm run screener -- --no-option-chains
   npm run screener -- --clear-session
+  npm run screener -- --symbols AAPL,TSLA,MSFT
 
 Output Structure:
   Each symbol gets its own directory:
@@ -123,93 +128,118 @@ async function main() {
   let page: Page | null = null;
 
   try {
-    console.log('🚀 Starting Barchart Screener...\n');
+    // Check if manual symbols are provided
+    let symbols: string[] = [];
 
-    // Launch browser
-    browser = await chromium.launch({
-      headless: args.headless,
-      slowMo: args.headless ? 0 : 100,
-    });
+    if (args.symbols && args.symbols.length > 0) {
+      console.log('🚀 Using manual symbols (skipping Barchart screener)...\n');
+      console.log(`📊 Symbols: ${args.symbols.join(', ')}\n`);
+      symbols = args.symbols;
+    } else {
+      console.log('🚀 Starting Barchart Screener...\n');
 
-    context = await browser.newContext({
-      viewport: { width: 1920, height: 1080 },
-      userAgent:
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    });
+      // Launch browser
+      browser = await chromium.launch({
+        headless: args.headless,
+        slowMo: args.headless ? 0 : 100,
+      });
 
-    page = await context.newPage();
+      context = await browser.newContext({
+        viewport: { width: 1920, height: 1080 },
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      });
 
-    // Create screener skill
-    const screenerSkill = new BarchartScreenerSkill(page, {
-      screenerUrl,
-      screenerName: 'Base Screener-DACS3 for CALL',
-      loginConfig: {
-        email,
-        password,
-        loginUrl,
-      },
-      downloadCSV: args.download,
-      assetsBasePath: args.assetsPath,
-    });
+      page = await context.newPage();
 
-    // Execute screener
-    const result = await screenerSkill.execute();
+      // Create screener skill
+      const screenerSkill = new BarchartScreenerSkill(page, {
+        screenerUrl,
+        screenerName: 'Base Screener-DACS3 for CALL',
+        loginConfig: {
+          email,
+          password,
+          loginUrl,
+        },
+        downloadCSV: args.download,
+        assetsBasePath: args.assetsPath,
+      });
 
-    if (!result.success) {
-      console.error(`\n❌ Screener failed: ${result.error}`);
-      process.exit(1);
-    }
+      // Execute screener
+      const result = await screenerSkill.execute();
 
-    // Check if no symbols were found
-    console.log(`\n[DEBUG] Checking noSymbolsFound: ${result.data?.noSymbolsFound}`);
-    console.log(`[DEBUG] result.data:`, JSON.stringify(result.data, null, 2));
+      if (!result.success) {
+        console.error(`\n❌ Screener failed: ${result.error}`);
+        process.exit(1);
+      }
 
-    if (result.data?.noSymbolsFound) {
-      console.log('\n⚠️ No symbols found that match the requirements!\n');
-      console.log(`📊 Screener URL: ${screenerUrl}`);
+      // Check if no symbols were found
+      console.log(`\n[DEBUG] Checking noSymbolsFound: ${result.data?.noSymbolsFound}`);
+      console.log(`[DEBUG] result.data:`, JSON.stringify(result.data, null, 2));
 
-      // Create a marker file to signal no results
-      const fs = require('fs');
-      const noResultsFile = path.join(args.assetsPath!, 'NO_SYMBOLS_FOUND.json');
-      console.log(`[DEBUG] Creating marker file at: ${noResultsFile}`);
-      console.log(`[DEBUG] Assets path directory: ${path.dirname(noResultsFile)}`);
+      if (result.data?.noSymbolsFound) {
+        console.log('\n⚠️ No symbols found that match the requirements!\n');
+        console.log(`📊 Screener URL: ${screenerUrl}`);
 
-      fs.mkdirSync(path.dirname(noResultsFile), { recursive: true });
-      fs.writeFileSync(noResultsFile, JSON.stringify({
-        timestamp: new Date().toISOString(),
-        screenerUrl: screenerUrl,
-        screenerName: result.data.screenerName || 'Unknown Screener',
-        message: 'No symbols found that match the requirements'
-      }, null, 2));
+        // Create a marker file to signal no results
+        const fs = require('fs');
+        const noResultsFile = path.join(args.assetsPath!, 'NO_SYMBOLS_FOUND.json');
+        console.log(`[DEBUG] Creating marker file at: ${noResultsFile}`);
+        console.log(`[DEBUG] Assets path directory: ${path.dirname(noResultsFile)}`);
 
-      console.log(`📄 Created marker file: ${noResultsFile}`);
-      console.log(`[DEBUG] File exists after creation: ${fs.existsSync(noResultsFile)}`);
-      console.log('\n✅ Screener completed (no results to process)\n');
-      process.exit(0);
-    }
+        fs.mkdirSync(path.dirname(noResultsFile), { recursive: true });
+        fs.writeFileSync(noResultsFile, JSON.stringify({
+          timestamp: new Date().toISOString(),
+          screenerUrl: screenerUrl,
+          screenerName: result.data.screenerName || 'Unknown Screener',
+          message: 'No symbols found that match the requirements'
+        }, null, 2));
 
-    // Display results
-    console.log('\n✅ Screener completed successfully!\n');
-    console.log(`📊 Results:`);
-    console.log(`   Symbols found: ${result.data?.symbols.length || 0}`);
+        console.log(`📄 Created marker file: ${noResultsFile}`);
+        console.log(`[DEBUG] File exists after creation: ${fs.existsSync(noResultsFile)}`);
+        console.log('\n✅ Screener completed (no results to process)\n');
+        process.exit(0);
+      }
 
-    if (result.data?.symbols && result.data.symbols.length > 0) {
-      console.log(`   Symbols: ${result.data.symbols.join(', ')}`);
-    }
+      // Get symbols from screener results
+      symbols = result.data?.symbols || [];
 
-    if (result.data?.csvPaths) {
-      console.log(`\n📁 Screener CSV Files:`);
-      for (const [symbol, filePath] of Object.entries(result.data.csvPaths)) {
-        console.log(`   ${symbol}: ${filePath}`);
+      // Display results
+      console.log('\n✅ Screener completed successfully!\n');
+      console.log(`📊 Results:`);
+      console.log(`   Symbols found: ${symbols.length}`);
+      console.log(`   Symbols: ${symbols.join(', ')}`);
+
+      if (result.data?.csvPaths) {
+        console.log(`\n📁 Screener CSV Files:`);
+        for (const [symbol, filePath] of Object.entries(result.data.csvPaths)) {
+          console.log(`   ${symbol}: ${filePath}`);
+        }
       }
     }
 
     // Step 2: Extract option chains from CBOE
-    if (args.optionChains && result.data?.symbols && result.data.symbols.length > 0) {
+    if (args.optionChains && symbols.length > 0) {
       console.log('\n📊 Extracting Option Chains from CBOE...\n');
 
+      // Launch browser if not already launched (for manual symbols mode)
+      if (!browser) {
+        browser = await chromium.launch({
+          headless: args.headless,
+          slowMo: args.headless ? 0 : 100,
+        });
+
+        context = await browser.newContext({
+          viewport: { width: 1920, height: 1080 },
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        });
+
+        page = await context.newPage();
+      }
+
       const optionChainSkill = new CboeOptionChainSkill(page, {
-        symbols: result.data.symbols,
+        symbols: symbols,
         assetsBasePath: args.assetsPath,
       });
 
