@@ -133,7 +133,8 @@ async function main() {
 
     if (args.symbols && args.symbols.length > 0) {
       console.log('🚀 Using manual symbols (skipping Barchart screener)...\n');
-      console.log(`📊 Symbols: ${args.symbols.join(', ')}\n`);
+      console.log(`📊 Symbols requested: ${args.symbols.length}`);
+      console.log(`📊 Symbol list: ${args.symbols.join(', ')}\n`);
       symbols = args.symbols;
     } else {
       console.log('🚀 Starting Barchart Screener...\n');

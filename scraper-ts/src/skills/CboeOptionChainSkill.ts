@@ -81,6 +81,13 @@ export class CboeOptionChainSkill extends BaseSkill<CboeOptionChainConfig, Optio
       console.log(`   Success: ${successCount}/${this.config.symbols.length}`);
       console.log(`   Failed: ${errorCount}/${this.config.symbols.length}`);
 
+      if (errorCount > 0) {
+        console.log(`\n⚠️ Failed Symbols:`);
+        for (const [symbol, error] of Object.entries(errors)) {
+          console.log(`   ${symbol}: ${error}`);
+        }
+      }
+
       return this.success({
         success: successCount > 0,
         filePaths,

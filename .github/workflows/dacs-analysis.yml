@@ -75,15 +75,20 @@ jobs:
         run: |
           # Check if manual symbols are provided
           if [ -n "${{ inputs.manual_symbols }}" ]; then
-            echo "Running with manual symbols: ${{ inputs.manual_symbols }}"
+            echo "🔧 Manual symbols mode enabled"
+            echo "📊 Input string: '${{ inputs.manual_symbols }}'"
+            # Count symbols by splitting on comma
+            SYMBOL_COUNT=$(echo "${{ inputs.manual_symbols }}" | tr ',' '\n' | grep -v '^$' | wc -l)
+            echo "📊 Expected symbols: $SYMBOL_COUNT"
             npm run screener -- --symbols "${{ inputs.manual_symbols }}" 2>&1 | tee screener.log
           else
             echo "Running Barchart Screener..."
             npm run screener 2>&1 | tee screener.log
           fi
 
-          echo "=== Screener Log (last 50 lines) ==="
-          tail -50 screener.log
+          echo ""
+          echo "=== Screener Log (last 100 lines) ==="
+          tail -100 screener.log
 
           # Check if "No symbols found" message exists
           if grep -q "No symbols found that match the requirements" screener.log; then
@@ -98,9 +103,14 @@ jobs:
           echo "✓ Found $SYMBOLS symbols"
 
           # Check if assets folder was created
+          echo ""
+          echo "=== Asset Folders Check ==="
           if [ -d "../assets" ]; then
-            echo "Assets folders created:"
-            ls -la ../assets/ | grep "^d" || echo "No asset folders"
+            FOLDER_COUNT=$(ls -1 ../assets/ | grep -v "\.json" | wc -l)
+            echo "✓ Assets folder exists"
+            echo "📁 Asset folders created: $FOLDER_COUNT"
+            echo "📋 Folders:"
+            ls -1 ../assets/ | grep -v "\.json" | sed 's/^/     /'
           else
             echo "⚠️ Assets folder was not created!"
           fi
